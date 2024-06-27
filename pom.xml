@@ -21,8 +21,8 @@
     </modules>
 
     <scm>
-        <connection>scm:git:git.biit-solutions.com:Java/Profile Matcher.git</connection>
-        <developerConnection>scm:git:git.biit-solutions.com:Java/Profile Matcher.git</developerConnection>
+        <connection>scm:git:git.biit-solutions.com:Java/ProfileMatcher.git</connection>
+        <developerConnection>scm:git:git.biit-solutions.com:Java/ProfileMatcher.git</developerConnection>
         <tag>Profile Matcher</tag>
     </scm>
 

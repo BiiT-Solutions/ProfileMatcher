@@ -1,0 +1,17 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="1" verbose="1" name="Profile Matcher">
+    <listeners>
+        <listener class-name="com.biit.profile.core.TestListener"></listener>
+    </listeners>
+
+    <test name="Profile Matcher" enabled="true" preserve-order="true">
+        <groups>
+            <run>
+                <include name="myEntityListeners"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.biit.profile.core.MyEntityTest"/>
+        </classes>
+    </test>
+</suite>

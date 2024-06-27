@@ -1,6 +1,5 @@
 package com.biit.profile.core.kafka;
 
-import com.biit.profile.core.kafka.EventConsumerListener;
 import com.biit.kafka.events.Event;
 import com.biit.kafka.logger.EventsLogger;
 import org.springframework.beans.factory.annotation.Autowired;

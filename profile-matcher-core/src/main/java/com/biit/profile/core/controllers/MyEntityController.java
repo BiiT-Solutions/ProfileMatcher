@@ -4,6 +4,7 @@ package com.biit.profile.core.controllers;
 import com.biit.profile.core.converters.MyEntityConverter;
 import com.biit.profile.core.converters.models.MyEntityConverterRequest;
 import com.biit.profile.core.exceptions.MyEntityNotFoundException;
+import com.biit.profile.core.kafka.MyEntityEventSender;
 import com.biit.profile.core.providers.MyEntityProvider;
 import com.biit.profile.core.models.MyEntityDTO;
 import com.biit.profile.persistence.entities.MyEntity;
@@ -17,7 +18,7 @@ public class MyEntityController extends KafkaElementController<MyEntity, Long, M
         MyEntityProvider, MyEntityConverterRequest, MyEntityConverter> {
 
     @Autowired
-    protected MyEntityController(MyEntityProvider provider, MyEntityConverter converter, IEventSender<MyEntityDTO> eventSender) {
+    protected MyEntityController(MyEntityProvider provider, MyEntityConverter converter, MyEntityEventSender eventSender) {
         super(provider, converter, eventSender);
     }
 

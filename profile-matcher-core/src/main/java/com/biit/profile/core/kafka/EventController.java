@@ -2,7 +2,7 @@ package com.biit.profile.core.kafka;
 
 import com.biit.kafka.events.Event;
 import com.biit.kafka.logger.EventsLogger;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -14,7 +14,7 @@ import java.util.TimeZone;
 /**
  * Subscribes to the EventListener to get any event, and handles it.
  */
-@ConditionalOnProperty(prefix = "spring.kafka", name = "enabled", havingValue = "true")
+@ConditionalOnExpression("${spring.kafka.enabled:false}")
 @Controller
 public class EventController {
 

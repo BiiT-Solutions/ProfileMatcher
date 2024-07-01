@@ -6,8 +6,8 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 @SpringBootTest
-@Test(groups = {"myEntityListeners"})
+@Test(groups = {"ProfileListeners"})
 @Listeners(TestListener.class)
-public class MyEntityTest extends AbstractTestNGSpringContextTests {
+public class ProfileTest extends AbstractTestNGSpringContextTests {
 
 }

@@ -2,17 +2,17 @@ package com.biit.profile.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
 
-public class MyEntityDTO extends ElementDTO<Long> {
+public class ProfileDTO extends ElementDTO<Long> {
 
     private Long id;
 
     private String name = "";
 
-    public MyEntityDTO() {
+    public ProfileDTO() {
         super();
     }
 
-    public MyEntityDTO(String name) {
+    public ProfileDTO(String name) {
         this();
         this.name = name;
     }

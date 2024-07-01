@@ -16,8 +16,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "my_entity")
-public class MyEntity extends Element<Long> {
+@Table(name = "profile")
+public class Profile extends Element<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

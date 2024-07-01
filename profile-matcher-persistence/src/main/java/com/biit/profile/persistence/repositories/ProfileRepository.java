@@ -1,6 +1,6 @@
 package com.biit.profile.persistence.repositories;
 
-import com.biit.profile.persistence.entities.MyEntity;
+import com.biit.profile.persistence.entities.Profile;
 import com.biit.server.persistence.repositories.ElementRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
@@ -9,8 +9,8 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface MyEntityRepository extends ElementRepository<MyEntity, Long> {
+public interface ProfileRepository extends ElementRepository<Profile, Long> {
 
-    Optional<MyEntity> findByName(String name);
+    Optional<Profile> findByName(String name);
 
 }

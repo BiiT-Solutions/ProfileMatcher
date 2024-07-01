@@ -7,11 +7,11 @@
     <test name="Profile Matcher" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <include name="myEntityRepository"/>
+                <include name="ProfileRepository"/>
             </run>
         </groups>
         <classes>
-            <class name="com.biit.profile.persistence.repositories.MyEntityRepositoryTests"/>
+            <class name="com.biit.profile.persistence.repositories.ProfileRepositoryTests"/>
         </classes>
     </test>
 </suite>

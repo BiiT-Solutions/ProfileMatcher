@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/profiles")
 public class ProfileServices extends ElementServices<Profile, Long, ProfileDTO, ProfileRepository,
@@ -31,9 +33,28 @@ public class ProfileServices extends ElementServices<Profile, Long, ProfileDTO, 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a profile by name.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping(value = {"/name/{name}"}, produces = {"application/json"})
-    public ProfileDTO get(@Parameter(description = "Name of an existing profile", required = true) @PathVariable("name") String name,
-                          Authentication authentication, HttpServletRequest request) {
+    @GetMapping(value = {"/names/{name}"}, produces = {"application/json"})
+    public ProfileDTO getByName(@Parameter(description = "Name of an existing profile", required = true) @PathVariable("name") String name,
+                                Authentication authentication, HttpServletRequest request) {
         return getController().getByName(name);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a profile by name.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/types/{type}"}, produces = {"application/json"})
+    public List<ProfileDTO> getByType(@Parameter(description = "Type of an existing profiles", required = true) @PathVariable("type") String type,
+                                      Authentication authentication, HttpServletRequest request) {
+        return getController().getByType(type);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a profile by tracking code.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/tracking-codes/{trackingCode}"}, produces = {"application/json"})
+    public List<ProfileDTO> getByTrackingCode(@Parameter(description = "Tracking Code of an existing profiles", required = true)
+                                              @PathVariable("trackingCode") String trackingCode,
+                                              Authentication authentication, HttpServletRequest request) {
+        return getController().getByTrackingCode(trackingCode);
     }
 }

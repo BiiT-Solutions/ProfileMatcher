@@ -1,4 +1,4 @@
-package com.biit.profile.rest;
+package com.biit.profile.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableCaching
 @ConfigurationPropertiesScan({"com.biit.profile"})
-@EnableJpaRepositories({"com.biit.profile.persistence.repositories"})
 @EntityScan({"com.biit.profile.persistence.entities"})
 @ComponentScan({"com.biit.profile", "com.biit.usermanager.client", "com.biit.server.client"})
 public class Server {

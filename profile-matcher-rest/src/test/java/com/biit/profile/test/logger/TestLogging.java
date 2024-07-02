@@ -1,4 +1,4 @@
-package com.biit.profile.rest.logger;
+package com.biit.profile.test.logger;
 
 import com.biit.profile.logger.BasicLogger;
 import org.slf4j.Logger;

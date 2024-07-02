@@ -1,9 +1,9 @@
-package com.biit.profile.rest;
+package com.biit.profile.test;
 
+import com.biit.profile.test.logger.TestLogging;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import com.biit.profile.rest.logger.TestLogging;
 
 public class TestListener implements ITestListener {
 

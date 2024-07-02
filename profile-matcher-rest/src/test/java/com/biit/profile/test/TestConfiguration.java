@@ -1,4 +1,4 @@
-package com.biit.profile.rest;
+package com.biit.profile.test;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

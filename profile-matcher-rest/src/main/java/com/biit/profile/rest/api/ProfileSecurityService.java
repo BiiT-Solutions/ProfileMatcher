@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Service("securityService")
 public class ProfileSecurityService extends SecurityService {
 
-    private static final String VIEWER = "Profile_VIEWER";
-    private static final String ADMIN = "Profile_ADMIN";
-    private static final String EDITOR = "Profile_EDITOR";
+    private static final String VIEWER = "PROFILEMATCHER_VIEWER";
+    private static final String ADMIN = "PROFILEMATCHER_ADMIN";
+    private static final String EDITOR = "PROFILEMATCHER_EDITOR";
 
     private String viewerPrivilege = null;
     private String adminPrivilege = null;

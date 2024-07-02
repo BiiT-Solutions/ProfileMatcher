@@ -1,12 +1,24 @@
 package com.biit.profile.core.models;
 
 import com.biit.server.controllers.models.ElementDTO;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class ProfileDTO extends ElementDTO<Long> {
 
     private Long id;
 
     private String name = "";
+
+    private String description;
+
+    private String trackingCode;
+
+    private String type;
+
+    @JsonSerialize(using = JsonValueSerializer.class)
+    @JsonDeserialize(using = JsonValueDeserializer.class)
+    private String content;
 
     public ProfileDTO() {
         super();
@@ -15,6 +27,12 @@ public class ProfileDTO extends ElementDTO<Long> {
     public ProfileDTO(String name) {
         this();
         this.name = name;
+    }
+
+    public ProfileDTO(String name, String content) {
+        this();
+        setName(name);
+        setContent(content);
     }
 
     @Override
@@ -33,5 +51,37 @@ public class ProfileDTO extends ElementDTO<Long> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTrackingCode() {
+        return trackingCode;
+    }
+
+    public void setTrackingCode(String trackingCode) {
+        this.trackingCode = trackingCode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

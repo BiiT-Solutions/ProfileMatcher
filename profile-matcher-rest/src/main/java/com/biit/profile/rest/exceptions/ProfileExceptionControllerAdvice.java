@@ -1,5 +1,6 @@
 package com.biit.profile.rest.exceptions;
 
+import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
 import com.biit.server.exceptions.NotFoundException;
 import com.biit.server.exceptions.ServerExceptionControllerAdvice;
 import com.biit.server.logger.RestServerExceptionLogger;
@@ -16,5 +17,11 @@ public class ProfileExceptionControllerAdvice extends ServerExceptionControllerA
     public ResponseEntity<Object> notFoundException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorMessage("NOT_FOUND", ex), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidProfileValueException.class)
+    public ResponseEntity<Object> invalidProfileValueException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage("Invalid Profile payload.", ex), HttpStatus.BAD_REQUEST);
     }
 }

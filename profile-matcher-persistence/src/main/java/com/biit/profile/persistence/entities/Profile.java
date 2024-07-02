@@ -35,7 +35,7 @@ public class Profile extends Element<Long> {
     private Long id;
 
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Convert(converter = StringCryptoConverter.class)
     private String name = "";
 

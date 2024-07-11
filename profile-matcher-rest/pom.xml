@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>com.biit</groupId>
-            <artifactId>user-manager-system-rest-client</artifactId>
+            <artifactId>user-manager-system-dto</artifactId>
         </dependency>
         <dependency>
             <groupId>com.biit</groupId>

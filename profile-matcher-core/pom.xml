@@ -31,6 +31,10 @@
         </dependency>
         <dependency>
             <groupId>com.biit</groupId>
+            <artifactId>user-manager-system-dto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.biit</groupId>
             <artifactId>kafka-client-dto</artifactId>
         </dependency>
 

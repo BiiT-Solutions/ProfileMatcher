@@ -7,21 +7,31 @@ import com.biit.profile.core.converters.models.ProfileConverterRequest;
 import com.biit.profile.core.exceptions.ProfileNotFoundException;
 import com.biit.profile.core.kafka.ProfileEventSender;
 import com.biit.profile.core.models.ProfileDTO;
+import com.biit.profile.core.providers.ProfileCandidateProvider;
 import com.biit.profile.core.providers.ProfileProvider;
 import com.biit.profile.persistence.entities.Profile;
+import com.biit.profile.persistence.entities.ProfileCandidate;
 import com.biit.profile.persistence.repositories.ProfileRepository;
+import com.biit.usermanager.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class ProfileController extends KafkaElementController<Profile, Long, ProfileDTO, ProfileRepository,
         ProfileProvider, ProfileConverterRequest, ProfileConverter> {
 
+    private final ProfileCandidateProvider profileCandidateProvider;
+
     @Autowired
-    protected ProfileController(ProfileProvider provider, ProfileConverter converter, ProfileEventSender eventSender) {
+    protected ProfileController(ProfileProvider provider, ProfileConverter converter, ProfileEventSender eventSender,
+                                ProfileCandidateProvider profileCandidateProvider) {
         super(provider, converter, eventSender);
+        this.profileCandidateProvider = profileCandidateProvider;
     }
 
     @Override
@@ -41,5 +51,42 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
 
     public List<ProfileDTO> getByType(String type) {
         return convertAll(getProvider().findByType(type));
+    }
+
+    public Set<ProfileCandidate> getCandidates(Long profileId) {
+        return profileCandidateProvider.findByIdProfileId(profileId);
+    }
+
+    public ProfileDTO assign(Long profileId, Collection<UserDTO> users, String assignedBy) {
+        final Profile profile = getProvider().findById(profileId).orElseThrow(()
+                -> new ProfileNotFoundException(this.getClass(), "No profile exists with id '" + profileId + "'."));
+
+        final List<Long> candidatesInProfile = profileCandidateProvider.findByIdProfileId(profileId).stream().map(profileCandidate ->
+                profileCandidate.getId().getUserId()).toList();
+
+        users = users.stream().filter(userDTO -> !candidatesInProfile.contains(userDTO.getId())).toList();
+
+        //Store into the profile
+        final List<ProfileCandidate> candidates = new ArrayList<>();
+        users.forEach(userDTO -> candidates.add(new ProfileCandidate(profileId, userDTO.getId())));
+        profileCandidateProvider.saveAll(candidates);
+
+        profile.setUpdatedBy(assignedBy);
+
+        return convert(getProvider().save(profile));
+    }
+
+    public ProfileDTO unAssign(Long profileId, Collection<UserDTO> users, String assignedBy) {
+        final Profile profile = getProvider().findById(profileId).orElseThrow(()
+                -> new ProfileNotFoundException(this.getClass(), "No Profile exists with id '" + profileId + "'."));
+
+
+        final List<ProfileCandidate> userGroupUserToDelete = new ArrayList<>();
+        users.forEach(userDTO -> userGroupUserToDelete.add(new ProfileCandidate(profileId, userDTO.getId())));
+        profileCandidateProvider.deleteAll(userGroupUserToDelete);
+
+        profile.setUpdatedBy(assignedBy);
+
+        return convert(getProvider().save(profile));
     }
 }

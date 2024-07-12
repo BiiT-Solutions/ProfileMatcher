@@ -76,6 +76,7 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         return convert(getProvider().save(profile));
     }
 
+
     public ProfileDTO unAssign(Long profileId, Collection<UserDTO> users, String assignedBy) {
         final Profile profile = getProvider().findById(profileId).orElseThrow(()
                 -> new ProfileNotFoundException(this.getClass(), "No Profile exists with id '" + profileId + "'."));

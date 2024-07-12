@@ -67,10 +67,8 @@ public class ProfileServices extends ElementServices<Profile, Long, ProfileDTO, 
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
-    @Operation(summary = "Gets all candidates from a profile.",
-            security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/{id}/users",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Gets all candidates from a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<Long> getCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
             @PathVariable("id") Long id,
@@ -82,10 +80,8 @@ public class ProfileServices extends ElementServices<Profile, Long, ProfileDTO, 
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
-    @Operation(summary = "Adds candidates to a profile.",
-            security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/{id}/users",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Adds candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO addCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
             @PathVariable("id") Long id,
@@ -97,10 +93,8 @@ public class ProfileServices extends ElementServices<Profile, Long, ProfileDTO, 
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
-    @Operation(summary = "Removes candidates from a Profile.",
-            security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/{id}/users/remove",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Removes candidates from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/{id}/users/remove", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO removeCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
             @PathVariable("id") Long id,

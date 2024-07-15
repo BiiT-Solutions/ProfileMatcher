@@ -7,6 +7,7 @@ import com.biit.profile.core.converters.models.ProfileConverterRequest;
 import com.biit.profile.core.exceptions.ProfileNotFoundException;
 import com.biit.profile.core.kafka.ProfileEventSender;
 import com.biit.profile.core.models.ProfileDTO;
+import com.biit.profile.core.providers.ProfileCandidateCommentProvider;
 import com.biit.profile.core.providers.ProfileCandidateProvider;
 import com.biit.profile.core.providers.ProfileProvider;
 import com.biit.profile.persistence.entities.Profile;
@@ -26,12 +27,15 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         ProfileProvider, ProfileConverterRequest, ProfileConverter> {
 
     private final ProfileCandidateProvider profileCandidateProvider;
+    private final ProfileCandidateCommentProvider profileCandidateCommentProvider;
 
     @Autowired
     protected ProfileController(ProfileProvider provider, ProfileConverter converter, ProfileEventSender eventSender,
-                                ProfileCandidateProvider profileCandidateProvider) {
+                                ProfileCandidateProvider profileCandidateProvider,
+                                ProfileCandidateCommentProvider profileCandidateCommentProvider) {
         super(provider, converter, eventSender);
         this.profileCandidateProvider = profileCandidateProvider;
+        this.profileCandidateCommentProvider = profileCandidateCommentProvider;
     }
 
     @Override
@@ -54,14 +58,14 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
     }
 
     public Set<ProfileCandidate> getCandidates(Long profileId) {
-        return profileCandidateProvider.findByIdProfileId(profileId);
+        return profileCandidateProvider.findByProfileId(profileId);
     }
 
     public ProfileDTO assign(Long profileId, Collection<UserDTO> users, String assignedBy) {
         final Profile profile = getProvider().findById(profileId).orElseThrow(()
                 -> new ProfileNotFoundException(this.getClass(), "No profile exists with id '" + profileId + "'."));
 
-        final List<Long> candidatesInProfile = profileCandidateProvider.findByIdProfileId(profileId).stream().map(profileCandidate ->
+        final List<Long> candidatesInProfile = profileCandidateProvider.findByProfileId(profileId).stream().map(profileCandidate ->
                 profileCandidate.getId().getUserId()).toList();
 
         users = users.stream().filter(userDTO -> !candidatesInProfile.contains(userDTO.getId())).toList();
@@ -82,9 +86,14 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
                 -> new ProfileNotFoundException(this.getClass(), "No Profile exists with id '" + profileId + "'."));
 
 
-        final List<ProfileCandidate> userGroupUserToDelete = new ArrayList<>();
-        users.forEach(userDTO -> userGroupUserToDelete.add(new ProfileCandidate(profileId, userDTO.getId())));
-        profileCandidateProvider.deleteAll(userGroupUserToDelete);
+        final List<ProfileCandidate> userGroupUsersToDelete = new ArrayList<>();
+        users.forEach(userDTO -> userGroupUsersToDelete.add(new ProfileCandidate(profileId, userDTO.getId())));
+        profileCandidateProvider.deleteAll(userGroupUsersToDelete);
+
+        //Remove any comment.
+        userGroupUsersToDelete.forEach(userGroupUserToDelete ->
+                profileCandidateCommentProvider.deleteByIdProfileIdAndIdUserId(userGroupUserToDelete.getId().getProfileId(),
+                        userGroupUserToDelete.getId().getUserId()));
 
         profile.setUpdatedBy(assignedBy);
 

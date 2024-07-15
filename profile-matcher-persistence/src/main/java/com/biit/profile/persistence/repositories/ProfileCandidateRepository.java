@@ -6,6 +6,7 @@ import com.biit.server.persistence.repositories.StorableObjectRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -16,4 +17,6 @@ public interface ProfileCandidateRepository extends StorableObjectRepository<Pro
     Set<ProfileCandidate> findByIdProfileId(Long profileId);
 
     Set<ProfileCandidate> findByIdUserId(Long userId);
+
+    Optional<ProfileCandidate> findByIdProfileIdAndIdUserId(Long profileId, Long userId);
 }

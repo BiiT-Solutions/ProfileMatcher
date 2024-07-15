@@ -7,6 +7,7 @@ import com.biit.server.providers.StorableObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -18,12 +19,16 @@ public class ProfileCandidateProvider extends StorableObjectProvider<ProfileCand
         super(repository);
     }
 
-    public Set<ProfileCandidate> findByIdUserId(Long userId) {
+    public Set<ProfileCandidate> findByUserId(Long userId) {
         return getRepository().findByIdUserId(userId);
     }
 
-    public Set<ProfileCandidate> findByIdProfileId(Long profileId) {
+    public Set<ProfileCandidate> findByProfileId(Long profileId) {
         return getRepository().findByIdProfileId(profileId);
+    }
+
+    public Optional<ProfileCandidate> findByProfileIdAndUserId(Long profileId, Long userId) {
+        return getRepository().findByIdProfileIdAndIdUserId(profileId, userId);
     }
 
     public ProfileCandidate assign(Long userId, Long teamId) {

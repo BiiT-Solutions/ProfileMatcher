@@ -8,10 +8,12 @@
         <groups>
             <run>
                 <include name="profileServices"/>
+                <include name="profileCandidateCommentServices"/>
             </run>
         </groups>
         <classes>
             <class name="com.biit.profile.test.api.ProfileServicesTests"/>
+            <class name="com.biit.profile.test.api.ProfileCandidateCommentServicesTests"/>
         </classes>
     </test>
 </suite>

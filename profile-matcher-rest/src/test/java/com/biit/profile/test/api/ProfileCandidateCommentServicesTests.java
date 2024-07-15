@@ -1,6 +1,7 @@
 package com.biit.profile.test.api;
 
 import com.biit.drools.form.DroolsSubmittedForm;
+import com.biit.profile.core.models.ProfileCandidateCommentDTO;
 import com.biit.profile.core.models.ProfileDTO;
 import com.biit.server.security.model.AuthRequest;
 import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
@@ -8,6 +9,7 @@ import com.biit.usermanager.dto.UserDTO;
 import com.biit.utils.file.FileReader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +32,20 @@ import org.testng.annotations.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@Test(groups = {"profileServices"})
-public class ProfileServicesTests extends AbstractTestNGSpringContextTests {
+@Test(groups = {"profileCandidateCommentServices"})
+public class ProfileCandidateCommentServicesTests extends AbstractTestNGSpringContextTests {
 
     private static final String DROOLS_FORM_FILE_PATH = "drools/DroolsSubmittedCadtProfileCreator.json";
     private static final String PROFILE_NAME = "Profile Creation 1";
@@ -60,6 +63,9 @@ public class ProfileServicesTests extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME_2 = "User2";
     private static final String USER_LASTNAME_2 = "Lastname2";
     private static final String USER_EMAIL_2 = "email2@test.com";
+
+    private static final String USER_COMMENT_1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisis arcu nisi, sed molestie velit egestas quis. Morbi nec congue nibh, quis fermentum ante. Nam dignissim nisl a leo dignissim laoreet. Phasellus non ultricies nunc. Sed tempor, nunc in rutrum fringilla, nisi felis convallis ipsum, ut molestie libero felis quis nisl. Morbi feugiat dui id maximus dictum. Nunc ac consectetur metus, in bibendum purus.";
+    private static final String USER_COMMENT_2 = "Donec congue, quam ac dignissim condimentum, ex nisl pulvinar magna, at convallis ipsum nunc in dolor. Mauris sed urna vel justo condimentum fermentum nec in ex. In sed pharetra turpis. Fusce mattis convallis justo, ac hendrerit velit mollis quis. Donec quis sapien porta, pretium purus et, sodales purus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer ac urna fermentum, maximus sem ac, facilisis metus. Maecenas fringilla nec leo ut semper. Proin sed ante massa. Proin efficitur laoreet lacus eget consequat. Donec arcu sapien, euismod vitae iaculis ac, tincidunt et diam. Sed sed massa eros. Vivamus lobortis ut nisi at facilisis. Ut eu est mattis, bibendum ligula mattis, suscipit nulla.";
 
     private final static String USER_NAME = "user";
     private final static String USER_PASSWORD = "password";
@@ -155,69 +161,29 @@ public class ProfileServicesTests extends AbstractTestNGSpringContextTests {
 
 
     @Test(dependsOnMethods = "createProfile")
-    public void searchProfileByName() throws Exception {
-        final MvcResult createResult = this.mockMvc
-                .perform(get("/profiles/names/" + PROFILE_NAME)
+    public void commentCanNotyBeAddedToCandidate1ToProfile() throws Exception {
+        this.mockMvc
+                .perform(put("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_1 + "/comments/" + USER_COMMENT_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andReturn();
-
-        final ProfileDTO profile =
-                objectMapper.readValue(createResult.getResponse().getContentAsString(), ProfileDTO.class);
-        Assert.assertEquals(profile.getName(), PROFILE_NAME);
     }
 
 
-    @Test(dependsOnMethods = "createProfile")
-    public void searchProfileByType() throws Exception {
-        final MvcResult createResult = this.mockMvc
-                .perform(get("/profiles/types/" + PROFILE_TYPE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-
-        final List<ProfileDTO> profiles =
-                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), ProfileDTO[].class));
-        Assert.assertEquals(profiles.size(), 1);
-        Assert.assertEquals(profiles.get(0).getName(), PROFILE_NAME);
-        Assert.assertEquals(profiles.get(0).getType(), PROFILE_TYPE);
-    }
-
-
-    @Test(dependsOnMethods = "createProfile")
-    public void searchProfileByTrackingCode() throws Exception {
-        final MvcResult createResult = this.mockMvc
-                .perform(get("/profiles/tracking-codes/" + PROFILE_TRACKING_CODE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-
-        final List<ProfileDTO> profiles =
-                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), ProfileDTO[].class));
-        Assert.assertEquals(profiles.size(), 1);
-        Assert.assertEquals(profiles.get(0).getName(), PROFILE_NAME);
-        Assert.assertEquals(profiles.get(0).getTrackingCode(), PROFILE_TRACKING_CODE);
-    }
-
-
-    @Test(dependsOnMethods = "createProfile")
+    @Test(dependsOnMethods = "commentCanNotyBeAddedToCandidate1ToProfile")
     public void addCandidateToProfile() throws Exception {
         final List<UserDTO> users = new ArrayList<>();
         UserDTO userDTO1 = new UserDTO(USER_USERNAME_1, USER_NAME_1, USER_LASTNAME_1, USER_EMAIL_1);
-        userDTO1.setId(1L);
+        userDTO1.setId(USER_ID_1);
         users.add(userDTO1);
 
         UserDTO userDTO2 = new UserDTO(USER_USERNAME_2, USER_NAME_2, USER_LASTNAME_2, USER_EMAIL_2);
-        userDTO2.setId(2L);
+        userDTO2.setId(USER_ID_2);
         users.add(userDTO2);
 
-        final MvcResult createResult = this.mockMvc
+        this.mockMvc
                 .perform(post("/profiles/" + profile.getId() + "/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(users))
@@ -228,23 +194,73 @@ public class ProfileServicesTests extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dependsOnMethods = "addCandidateToProfile")
-    public void removeCandidateToProfile() throws Exception {
-        final List<UserDTO> users = new ArrayList<>();
-        UserDTO userDTO1 = new UserDTO(USER_USERNAME_1, USER_NAME_1, USER_LASTNAME_1, USER_EMAIL_1);
-        userDTO1.setId(USER_ID_1);
-        users.add(userDTO1);
-
-        UserDTO userDTO2 = new UserDTO(USER_USERNAME_2, USER_NAME_2, USER_LASTNAME_2, USER_EMAIL_2);
-        userDTO2.setId(USER_ID_2);
-        users.add(userDTO2);
-
-        final MvcResult createResult = this.mockMvc
-                .perform(post("/profiles/" + profile.getId() + "/users/remove")
+    public void addCommentTooLongToCandidate1ToProfile() throws Exception {
+        this.mockMvc
+                .perform(put("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_1 + "/comments/"
+                        + StringUtils.repeat(USER_COMMENT_1, 30))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(users))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+
+    @Test(dependsOnMethods = "addCommentTooLongToCandidate1ToProfile")
+    public void addCommentToCandidate1ToProfile() throws Exception {
+        this.mockMvc
+                .perform(put("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_1 + "/comments/"
+                        + USER_COMMENT_1)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
+
+
+    @Test(dependsOnMethods = "addCandidateToProfile")
+    public void addCommentToCandidate2ToProfile() throws Exception {
+        this.mockMvc
+                .perform(put("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_2 + "/comments/"
+                        + USER_COMMENT_2)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+
+    @Test(dependsOnMethods = "addCommentToCandidate1ToProfile")
+    public void getCommentFromCandidate1OnProfile() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final ProfileCandidateCommentDTO profileCandidateCommentDTO =
+                objectMapper.readValue(createResult.getResponse().getContentAsString(), ProfileCandidateCommentDTO.class);
+        Assert.assertEquals(profileCandidateCommentDTO.getComment(), USER_COMMENT_1);
+    }
+
+
+    @Test(dependsOnMethods = "addCommentToCandidate2ToProfile")
+    public void getCommentFromCandidate2OnProfile() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_2)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final ProfileCandidateCommentDTO profileCandidateCommentDTO =
+                objectMapper.readValue(createResult.getResponse().getContentAsString(), ProfileCandidateCommentDTO.class);
+        Assert.assertEquals(profileCandidateCommentDTO.getComment(), USER_COMMENT_2);
+    }
+
 }

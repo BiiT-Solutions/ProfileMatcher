@@ -22,11 +22,13 @@ import java.util.Objects;
         @Index(name = "ind_profile", columnList = "user_id"),
 })
 public class ProfileCandidateComment extends Element<ProfileCandidateId> {
+    public static final int COMMENT_LENGTH = 10000;
 
     @EmbeddedId
     private ProfileCandidateId id;
 
-    @Column(name = "comment")
+
+    @Column(name = "comment", length = COMMENT_LENGTH)
     @Convert(converter = StringCryptoConverter.class)
     private String comment = "";
 

@@ -66,8 +66,8 @@ public class ProfileCandidateCommentServices extends ElementServices<ProfileCand
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets a comment.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @PutMapping(value = {"/profiles/{profileId}/users/userId/comments/{comment}"}, produces = {"application/json"})
+    @Operation(summary = "Adds a comment.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping(value = {"/profiles/{profileId}/users/{userId}/comments/{comment}"}, produces = {"application/json"})
     public ProfileCandidateComment putComment(@Parameter(description = "Id of an existing profile", required = true) @PathVariable("profileId") Long profileId,
                                               @Parameter(description = "Id of an existing user", required = true) @PathVariable("userId") Long userId,
                                               @Parameter(description = "The comment", required = true) @PathVariable("comment") String comment,

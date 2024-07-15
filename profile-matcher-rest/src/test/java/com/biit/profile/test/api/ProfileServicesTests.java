@@ -4,6 +4,7 @@ import com.biit.drools.form.DroolsSubmittedForm;
 import com.biit.profile.core.models.ProfileDTO;
 import com.biit.server.security.model.AuthRequest;
 import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
+import com.biit.usermanager.dto.UserDTO;
 import com.biit.utils.file.FileReader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +29,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -46,6 +48,16 @@ public class ProfileServicesTests extends AbstractTestNGSpringContextTests {
     private static final String PROFILE_NAME = "Profile Creation 1";
     private static final String PROFILE_TYPE = "Job Offer";
     private static final String PROFILE_TRACKING_CODE = UUID.randomUUID().toString();
+
+    private static final String USER_USERNAME_1 = "username1";
+    private static final String USER_NAME_1 = "User1";
+    private static final String USER_LASTNAME_1 = "Lastname1";
+    private static final String USER_EMAIL_1 = "email1@test.com";
+
+    private static final String USER_USERNAME_2 = "username2";
+    private static final String USER_NAME_2 = "User2";
+    private static final String USER_LASTNAME_2 = "Lastname2";
+    private static final String USER_EMAIL_2 = "email2@test.com";
 
     private final static String USER_NAME = "user";
     private final static String USER_PASSWORD = "password";
@@ -67,6 +79,8 @@ public class ProfileServicesTests extends AbstractTestNGSpringContextTests {
     private MockMvc mockMvc;
 
     private String adminJwtToken;
+
+    private ProfileDTO profile;
 
 
     private <T> String toJson(T object) throws JsonProcessingException {
@@ -131,7 +145,7 @@ public class ProfileServicesTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andReturn();
 
-        final ProfileDTO profile =
+        profile =
                 objectMapper.readValue(createResult.getResponse().getContentAsString(), ProfileDTO.class);
         Assert.assertEquals(profile.getName(), PROFILE_NAME);
         Assert.assertEquals(profile.getContent(), toJson(droolsSubmittedForm));
@@ -187,5 +201,48 @@ public class ProfileServicesTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(profiles.size(), 1);
         Assert.assertEquals(profiles.get(0).getName(), PROFILE_NAME);
         Assert.assertEquals(profiles.get(0).getTrackingCode(), PROFILE_TRACKING_CODE);
+    }
+
+
+    @Test(dependsOnMethods = "createProfile")
+    public void addCandidateToProfile() throws Exception {
+        final List<UserDTO> users = new ArrayList<>();
+        UserDTO userDTO1 = new UserDTO(USER_USERNAME_1, USER_NAME_1, USER_LASTNAME_1, USER_EMAIL_1);
+        userDTO1.setId(1L);
+        users.add(userDTO1);
+
+        UserDTO userDTO2 = new UserDTO(USER_USERNAME_2, USER_NAME_2, USER_LASTNAME_2, USER_EMAIL_2);
+        userDTO2.setId(2L);
+        users.add(userDTO2);
+
+        final MvcResult createResult = this.mockMvc
+                .perform(post("/profiles/" + profile.getId() + "/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(users))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "addCandidateToProfile")
+    public void removeCandidateToProfile() throws Exception {
+        final List<UserDTO> users = new ArrayList<>();
+        UserDTO userDTO1 = new UserDTO(USER_USERNAME_1, USER_NAME_1, USER_LASTNAME_1, USER_EMAIL_1);
+        userDTO1.setId(1L);
+        users.add(userDTO1);
+
+        UserDTO userDTO2 = new UserDTO(USER_USERNAME_2, USER_NAME_2, USER_LASTNAME_2, USER_EMAIL_2);
+        userDTO2.setId(2L);
+        users.add(userDTO2);
+
+        final MvcResult createResult = this.mockMvc
+                .perform(post("/profiles/" + profile.getId() + "/users/remove")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(users))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
     }
 }

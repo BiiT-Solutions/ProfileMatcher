@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Embeddable
 public class ProfileCandidateId implements Serializable {
@@ -13,16 +14,16 @@ public class ProfileCandidateId implements Serializable {
     @Column(name = "profile_id", nullable = false)
     private Long profileId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "user_uid", nullable = false)
+    private UUID userUid;
 
     public ProfileCandidateId() {
         super();
     }
 
-    public ProfileCandidateId(Long profileId, Long userId) {
+    public ProfileCandidateId(Long profileId, UUID userUid) {
         this.profileId = profileId;
-        this.userId = userId;
+        this.userUid = userUid;
     }
 
     public Long getProfileId() {
@@ -33,12 +34,12 @@ public class ProfileCandidateId implements Serializable {
         this.profileId = profileId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public UUID getUserUid() {
+        return userUid;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserUid(UUID userUid) {
+        this.userUid = userUid;
     }
 
     @Override
@@ -50,11 +51,11 @@ public class ProfileCandidateId implements Serializable {
             return false;
         }
         final ProfileCandidateId that = (ProfileCandidateId) o;
-        return Objects.equals(profileId, that.profileId) && Objects.equals(userId, that.userId);
+        return Objects.equals(profileId, that.profileId) && Objects.equals(userUid, that.userUid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(profileId, userId);
+        return Objects.hash(profileId, userUid);
     }
 }

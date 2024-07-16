@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class ProfileCandidateProvider extends StorableObjectProvider<ProfileCandidate, ProfileCandidateId, ProfileCandidateRepository> {
@@ -19,19 +20,19 @@ public class ProfileCandidateProvider extends StorableObjectProvider<ProfileCand
         super(repository);
     }
 
-    public Set<ProfileCandidate> findByUserId(Long userId) {
-        return getRepository().findByIdUserId(userId);
+    public Set<ProfileCandidate> findByUserUid(UUID userUid) {
+        return getRepository().findByIdUserUid(userUid);
     }
 
     public Set<ProfileCandidate> findByProfileId(Long profileId) {
         return getRepository().findByIdProfileId(profileId);
     }
 
-    public Optional<ProfileCandidate> findByProfileIdAndUserId(Long profileId, Long userId) {
-        return getRepository().findByIdProfileIdAndIdUserId(profileId, userId);
+    public Optional<ProfileCandidate> findByProfileIdAndUserUid(Long profileId, UUID userUid) {
+        return getRepository().findByIdProfileIdAndIdUserUid(profileId, userUid);
     }
 
-    public ProfileCandidate assign(Long userId, Long teamId) {
-        return save(new ProfileCandidate(teamId, userId));
+    public ProfileCandidate assign(UUID userUid, Long teamId) {
+        return save(new ProfileCandidate(teamId, userUid));
     }
 }

@@ -10,6 +10,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Cacheable
@@ -26,8 +27,8 @@ public class ProfileCandidate extends StorableObject {
         super();
     }
 
-    public ProfileCandidate(Long profileId, Long userId) {
-        setId(new ProfileCandidateId(profileId, userId));
+    public ProfileCandidate(Long profileId, UUID userUid) {
+        setId(new ProfileCandidateId(profileId, userUid));
     }
 
     public ProfileCandidateId getId() {

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class ProfileCandidateCommentProvider extends ElementProvider<ProfileCandidateComment, ProfileCandidateId, ProfileCandidateCommentRepository> {
@@ -18,19 +19,19 @@ public class ProfileCandidateCommentProvider extends ElementProvider<ProfileCand
         super(repository);
     }
 
-    public Set<ProfileCandidateComment> findByIdUserId(Long userId) {
-        return getRepository().findByIdUserId(userId);
+    public Set<ProfileCandidateComment> findByIdUserUid(UUID userUid) {
+        return getRepository().findByIdUserUid(userUid);
     }
 
     public Set<ProfileCandidateComment> findByIdProfileId(Long profileId) {
         return getRepository().findByIdProfileId(profileId);
     }
 
-    public ProfileCandidateComment findByIdProfileIdAndIdUserId(Long profileId, Long userId) {
-        return getRepository().findByIdProfileIdAndIdUserId(profileId, userId);
+    public ProfileCandidateComment findByIdProfileIdAndIdUserUid(Long profileId, UUID userUid) {
+        return getRepository().findByIdProfileIdAndIdUserUid(profileId, userUid);
     }
 
-    public void deleteByIdProfileIdAndIdUserId(Long profileId, Long userId) {
-        getRepository().deleteByIdProfileIdAndIdUserId(profileId, userId);
+    public void deleteByIdProfileIdAndIdUserUid(Long profileId, UUID userUid) {
+        getRepository().deleteByIdProfileIdAndIdUserUid(profileId, userUid);
     }
 }

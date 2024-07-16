@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -69,12 +70,12 @@ public class ProfileServices extends ElementServices<Profile, Long, ProfileDTO, 
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Gets all candidates from a profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<Long> getCandidates(
+    public Set<UUID> getCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
             @PathVariable("id") Long id,
             Authentication authentication,
             HttpServletRequest request) {
-        return getController().getCandidates(id).stream().map(profileCandidate -> profileCandidate.getId().getUserId())
+        return getController().getCandidates(id).stream().map(profileCandidate -> profileCandidate.getId().getUserUid())
                 .collect(Collectors.toSet());
     }
 

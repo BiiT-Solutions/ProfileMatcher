@@ -52,13 +52,13 @@ public class ProfileCandidateCommentServicesTests extends AbstractTestNGSpringCo
     private static final String PROFILE_TYPE = "Job Offer";
     private static final String PROFILE_TRACKING_CODE = UUID.randomUUID().toString();
 
-    private static final Long USER_ID_1 = 1L;
+    private static final UUID USER_ID_1 = UUID.randomUUID();
     private static final String USER_USERNAME_1 = "username1";
     private static final String USER_NAME_1 = "User1";
     private static final String USER_LASTNAME_1 = "Lastname1";
     private static final String USER_EMAIL_1 = "email1@test.com";
 
-    private static final Long USER_ID_2 = 2L;
+    private static final UUID USER_ID_2 = UUID.randomUUID();
     private static final String USER_USERNAME_2 = "username2";
     private static final String USER_NAME_2 = "User2";
     private static final String USER_LASTNAME_2 = "Lastname2";
@@ -176,11 +176,11 @@ public class ProfileCandidateCommentServicesTests extends AbstractTestNGSpringCo
     public void addCandidateToProfile() throws Exception {
         final List<UserDTO> users = new ArrayList<>();
         UserDTO userDTO1 = new UserDTO(USER_USERNAME_1, USER_NAME_1, USER_LASTNAME_1, USER_EMAIL_1);
-        userDTO1.setId(USER_ID_1);
+        userDTO1.setUID(USER_ID_1.toString());
         users.add(userDTO1);
 
         UserDTO userDTO2 = new UserDTO(USER_USERNAME_2, USER_NAME_2, USER_LASTNAME_2, USER_EMAIL_2);
-        userDTO2.setId(USER_ID_2);
+        userDTO2.setUID(USER_ID_2.toString());
         users.add(userDTO2);
 
         this.mockMvc

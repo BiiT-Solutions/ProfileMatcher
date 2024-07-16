@@ -13,13 +13,14 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "profile_candidate_comments", indexes = {
         @Index(name = "ind_profile", columnList = "profile_id"),
-        @Index(name = "ind_profile", columnList = "user_id"),
+        @Index(name = "ind_profile", columnList = "user_uid"),
 })
 public class ProfileCandidateComment extends Element<ProfileCandidateId> {
     public static final int COMMENT_LENGTH = 10000;
@@ -36,8 +37,8 @@ public class ProfileCandidateComment extends Element<ProfileCandidateId> {
         super();
     }
 
-    public ProfileCandidateComment(Long profileId, Long userId, String comment) {
-        setId(new ProfileCandidateId(profileId, userId));
+    public ProfileCandidateComment(Long profileId, UUID userUid, String comment) {
+        setId(new ProfileCandidateId(profileId, userUid));
         setComment(comment);
     }
 

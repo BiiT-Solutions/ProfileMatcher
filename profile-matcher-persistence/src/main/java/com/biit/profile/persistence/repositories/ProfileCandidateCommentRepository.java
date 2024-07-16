@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Repository
 @Transactional
@@ -15,9 +16,9 @@ public interface ProfileCandidateCommentRepository extends ElementRepository<Pro
 
     Set<ProfileCandidateComment> findByIdProfileId(Long profileId);
 
-    Set<ProfileCandidateComment> findByIdUserId(Long userId);
+    Set<ProfileCandidateComment> findByIdUserUid(UUID userUid);
 
-    ProfileCandidateComment findByIdProfileIdAndIdUserId(Long profileId, Long userId);
+    ProfileCandidateComment findByIdProfileIdAndIdUserUid(Long profileId, UUID userUid);
 
-    void deleteByIdProfileIdAndIdUserId(Long profileId, Long userId);
+    void deleteByIdProfileIdAndIdUserUid(Long profileId, UUID userUid);
 }

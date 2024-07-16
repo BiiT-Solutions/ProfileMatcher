@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Repository
 @Transactional
@@ -16,7 +17,7 @@ public interface ProfileCandidateRepository extends StorableObjectRepository<Pro
 
     Set<ProfileCandidate> findByIdProfileId(Long profileId);
 
-    Set<ProfileCandidate> findByIdUserId(Long userId);
+    Set<ProfileCandidate> findByIdUserUid(UUID userUid);
 
-    Optional<ProfileCandidate> findByIdProfileIdAndIdUserId(Long profileId, Long userId);
+    Optional<ProfileCandidate> findByIdProfileIdAndIdUserUid(Long profileId, UUID userUid);
 }

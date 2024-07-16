@@ -15,6 +15,7 @@ import com.biit.server.controller.ElementController;
 import org.springframework.stereotype.Controller;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Controller
 public class ProfileCandidateCommentController extends ElementController<ProfileCandidateComment, ProfileCandidateId, ProfileCandidateCommentDTO,
@@ -34,9 +35,9 @@ public class ProfileCandidateCommentController extends ElementController<Profile
     }
 
 
-    public ProfileCandidateComment getComment(Long profileId, Long userId) {
+    public ProfileCandidateComment getComment(Long profileId, UUID userUid) {
         //Delete previous one if exists.
-        return getProvider().findByIdProfileIdAndIdUserId(profileId, userId);
+        return getProvider().findByIdProfileIdAndIdUserUid(profileId, userUid);
     }
 
 
@@ -46,24 +47,24 @@ public class ProfileCandidateCommentController extends ElementController<Profile
     }
 
 
-    public ProfileCandidateComment addComment(Long profileId, Long userId, String comment) {
+    public ProfileCandidateComment addComment(Long profileId, UUID userUid, String comment) {
         if (comment.length() > ProfileCandidateComment.COMMENT_LENGTH) {
             throw new CommentTooLongException(this.getClass(), "Comment length exceeds the limit of '"
                     + ProfileCandidateComment.COMMENT_LENGTH + "' bytes");
         }
 
         //Delete previous one if exists.
-        getProvider().deleteByIdProfileIdAndIdUserId(profileId, userId);
+        getProvider().deleteByIdProfileIdAndIdUserUid(profileId, userUid);
 
         //Checks that exist the candidate
-        profileCandidateProvider.findByProfileIdAndUserId(profileId, userId).orElseThrow(() ->
-                new CandidateNotFoundException(this.getClass(), "No candidate '" + userId + "' found for profile '" + profileId + "'."));
+        profileCandidateProvider.findByProfileIdAndUserUid(profileId, userUid).orElseThrow(() ->
+                new CandidateNotFoundException(this.getClass(), "No candidate '" + userUid + "' found for profile '" + profileId + "'."));
 
-        return getProvider().save(new ProfileCandidateComment(profileId, userId, comment));
+        return getProvider().save(new ProfileCandidateComment(profileId, userUid, comment));
     }
 
 
-    public void deleteComment(Long profileId, Long userId) {
-        getProvider().deleteByIdProfileIdAndIdUserId(profileId, userId);
+    public void deleteComment(Long profileId, UUID userUid) {
+        getProvider().deleteByIdProfileIdAndIdUserUid(profileId, userUid);
     }
 }

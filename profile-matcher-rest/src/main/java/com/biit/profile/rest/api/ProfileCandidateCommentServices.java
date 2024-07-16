@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/profiles-candidates-comments")
@@ -37,21 +38,21 @@ public class ProfileCandidateCommentServices extends ElementServices<ProfileCand
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a comment.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping(value = {"/profiles/{profileId}/users/{userId}"}, produces = {"application/json"})
+    @GetMapping(value = {"/profiles/{profileId}/users/{userUid}"}, produces = {"application/json"})
     public ProfileCandidateComment getByName(@Parameter(description = "Id of an existing profile", required = true) @PathVariable("profileId") Long profileId,
-                                             @Parameter(description = "Id of an existing user", required = true) @PathVariable("userId") Long userId,
+                                             @Parameter(description = "Id of an existing user", required = true) @PathVariable("userUid") UUID userUid,
                                              Authentication authentication, HttpServletRequest request) {
-        return getController().getComment(profileId, userId);
+        return getController().getComment(profileId, userUid);
     }
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes a comment.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @DeleteMapping(value = {"/profiles/{profileId}/users/{userId}"}, produces = {"application/json"})
+    @DeleteMapping(value = {"/profiles/{profileId}/users/{userUid}"}, produces = {"application/json"})
     public void deleteByName(@Parameter(description = "Id of an existing profile", required = true) @PathVariable("profileId") Long profileId,
-                             @Parameter(description = "Id of an existing user", required = true) @PathVariable("userId") Long userId,
+                             @Parameter(description = "Id of an existing user", required = true) @PathVariable("userUid") UUID userUid,
                              Authentication authentication, HttpServletRequest request) {
-        getController().deleteComment(profileId, userId);
+        getController().deleteComment(profileId, userUid);
     }
 
 
@@ -67,12 +68,12 @@ public class ProfileCandidateCommentServices extends ElementServices<ProfileCand
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Adds a comment.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @PutMapping(value = {"/profiles/{profileId}/users/{userId}/comments/{comment}"}, produces = {"application/json"})
+    @PutMapping(value = {"/profiles/{profileId}/users/{userUid}/comments/{comment}"}, produces = {"application/json"})
     public ProfileCandidateComment putComment(@Parameter(description = "Id of an existing profile", required = true) @PathVariable("profileId") Long profileId,
-                                              @Parameter(description = "Id of an existing user", required = true) @PathVariable("userId") Long userId,
+                                              @Parameter(description = "UUID of an existing user", required = true) @PathVariable("userUid") UUID userUid,
                                               @Parameter(description = "The comment", required = true) @PathVariable("comment") String comment,
                                               Authentication authentication, HttpServletRequest request) {
-        return getController().addComment(profileId, userId, comment);
+        return getController().addComment(profileId, userUid, comment);
     }
 
 }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Controller
 public class ProfileController extends KafkaElementController<Profile, Long, ProfileDTO, ProfileRepository,
@@ -65,14 +66,14 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         final Profile profile = getProvider().findById(profileId).orElseThrow(()
                 -> new ProfileNotFoundException(this.getClass(), "No profile exists with id '" + profileId + "'."));
 
-        final List<Long> candidatesInProfile = profileCandidateProvider.findByProfileId(profileId).stream().map(profileCandidate ->
-                profileCandidate.getId().getUserId()).toList();
+        final List<UUID> candidatesInProfile = profileCandidateProvider.findByProfileId(profileId).stream().map(profileCandidate ->
+                profileCandidate.getId().getUserUid()).toList();
 
-        users = users.stream().filter(userDTO -> !candidatesInProfile.contains(userDTO.getId())).toList();
+        users = users.stream().filter(userDTO -> !candidatesInProfile.contains(userDTO.getUUID())).toList();
 
         //Store into the profile
         final List<ProfileCandidate> candidates = new ArrayList<>();
-        users.forEach(userDTO -> candidates.add(new ProfileCandidate(profileId, userDTO.getId())));
+        users.forEach(userDTO -> candidates.add(new ProfileCandidate(profileId, userDTO.getUUID())));
         profileCandidateProvider.saveAll(candidates);
 
         profile.setUpdatedBy(assignedBy);
@@ -87,13 +88,13 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
 
 
         final List<ProfileCandidate> userGroupUsersToDelete = new ArrayList<>();
-        users.forEach(userDTO -> userGroupUsersToDelete.add(new ProfileCandidate(profileId, userDTO.getId())));
+        users.forEach(userDTO -> userGroupUsersToDelete.add(new ProfileCandidate(profileId, userDTO.getUUID())));
         profileCandidateProvider.deleteAll(userGroupUsersToDelete);
 
         //Remove any comment.
         userGroupUsersToDelete.forEach(userGroupUserToDelete ->
-                profileCandidateCommentProvider.deleteByIdProfileIdAndIdUserId(userGroupUserToDelete.getId().getProfileId(),
-                        userGroupUserToDelete.getId().getUserId()));
+                profileCandidateCommentProvider.deleteByIdProfileIdAndIdUserUid(userGroupUserToDelete.getId().getProfileId(),
+                        userGroupUserToDelete.getId().getUserUid()));
 
         profile.setUpdatedBy(assignedBy);
 

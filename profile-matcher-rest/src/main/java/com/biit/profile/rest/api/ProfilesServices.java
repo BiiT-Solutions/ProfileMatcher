@@ -31,10 +31,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/profiles")
-public class ProfileServices extends ElementServices<Profile, Long, ProfileDTO, ProfileRepository,
+public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO, ProfileRepository,
         ProfileProvider, ProfileConverterRequest, ProfileConverter, ProfileController> {
 
-    public ProfileServices(ProfileController controller) {
+    public ProfilesServices(ProfileController controller) {
         super(controller);
     }
 

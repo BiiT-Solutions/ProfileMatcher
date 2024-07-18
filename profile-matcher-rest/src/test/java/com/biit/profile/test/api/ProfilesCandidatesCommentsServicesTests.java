@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Test(groups = {"profileCandidateCommentServices"})
-public class ProfileCandidateCommentServicesTests extends AbstractTestNGSpringContextTests {
+public class ProfilesCandidatesCommentsServicesTests extends AbstractTestNGSpringContextTests {
 
     private static final String DROOLS_FORM_FILE_PATH = "drools/DroolsSubmittedCadtProfileCreator.json";
     private static final String PROFILE_NAME = "Profile Creation 1";

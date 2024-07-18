@@ -27,11 +27,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/profiles-candidates-comments")
-public class ProfileCandidateCommentServices extends ElementServices<ProfileCandidateComment, ProfileCandidateId,
+public class ProfilesCandidatesCommentsServices extends ElementServices<ProfileCandidateComment, ProfileCandidateId,
         ProfileCandidateCommentDTO, ProfileCandidateCommentRepository, ProfileCandidateCommentProvider,
         ProfileCandidateCommentConverterRequest, ProfileCandidateCommentConverter, ProfileCandidateCommentController> {
 
-    public ProfileCandidateCommentServices(ProfileCandidateCommentController controller) {
+    public ProfilesCandidatesCommentsServices(ProfileCandidateCommentController controller) {
         super(controller);
     }
 

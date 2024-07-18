@@ -12,8 +12,8 @@
             </run>
         </groups>
         <classes>
-            <class name="com.biit.profile.test.api.ProfileServicesTests"/>
-            <class name="com.biit.profile.test.api.ProfileCandidateCommentServicesTests"/>
+            <class name="com.biit.profile.test.api.ProfilesServicesTests"/>
+            <class name="com.biit.profile.test.api.ProfilesCandidatesCommentsServicesTests"/>
         </classes>
     </test>
 </suite>

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Primary
 @Service("securityService")
-public class ProfileSecurityService extends SecurityService {
+public class ProfilesSecurityService extends SecurityService {
 
     private static final String VIEWER = "PROFILEMATCHER_VIEWER";
     private static final String ADMIN = "PROFILEMATCHER_ADMIN";

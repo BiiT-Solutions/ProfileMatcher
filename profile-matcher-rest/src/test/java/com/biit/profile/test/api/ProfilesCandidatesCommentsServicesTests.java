@@ -196,9 +196,9 @@ public class ProfilesCandidatesCommentsServicesTests extends AbstractTestNGSprin
     @Test(dependsOnMethods = "addCandidateToProfile")
     public void addCommentTooLongToCandidate1ToProfile() throws Exception {
         this.mockMvc
-                .perform(put("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_1 + "/comments/"
-                        + StringUtils.repeat(USER_COMMENT_1, 30))
-                        .contentType(MediaType.APPLICATION_JSON)
+                .perform(post("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_1 + "/comments")
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content(StringUtils.repeat(USER_COMMENT_1, 30))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -209,9 +209,9 @@ public class ProfilesCandidatesCommentsServicesTests extends AbstractTestNGSprin
     @Test(dependsOnMethods = "addCommentTooLongToCandidate1ToProfile")
     public void addCommentToCandidate1ToProfile() throws Exception {
         this.mockMvc
-                .perform(put("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_1 + "/comments/"
-                        + USER_COMMENT_1)
-                        .contentType(MediaType.APPLICATION_JSON)
+                .perform(post("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_1 + "/comments")
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content(USER_COMMENT_1)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -222,9 +222,9 @@ public class ProfilesCandidatesCommentsServicesTests extends AbstractTestNGSprin
     @Test(dependsOnMethods = "addCandidateToProfile")
     public void addCommentToCandidate2ToProfile() throws Exception {
         this.mockMvc
-                .perform(put("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_2 + "/comments/"
-                        + USER_COMMENT_2)
-                        .contentType(MediaType.APPLICATION_JSON)
+                .perform(post("/profiles-candidates-comments/profiles/" + profile.getId() + "/users/" + USER_ID_2 + "/comments")
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content(USER_COMMENT_2)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())

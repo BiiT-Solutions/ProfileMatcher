@@ -92,6 +92,19 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
         return getController().assign(id, users, authentication.getName());
     }
 
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
+    @Operation(summary = "Adds candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/{id}/users/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ProfileDTO addCandidatesByUUID(
+            @Parameter(description = "Id of an existing Profile", required = true)
+            @PathVariable("id") Long id,
+            @Parameter(description = "UUIDs from users", required = true)
+            @PathVariable("userUUID") Collection<UUID> usersUUIDs,
+            Authentication authentication,
+            HttpServletRequest request) {
+        return getController().assignByUUID(id, usersUUIDs, authentication.getName());
+    }
+
 
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Removes candidates from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))

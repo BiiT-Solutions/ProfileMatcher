@@ -13,6 +13,7 @@ import com.biit.profile.core.providers.ProfileProvider;
 import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.entities.ProfileCandidate;
 import com.biit.profile.persistence.repositories.ProfileRepository;
+import com.biit.usermanager.dto.BasicUserDTO;
 import com.biit.usermanager.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 public class ProfileController extends KafkaElementController<Profile, Long, ProfileDTO, ProfileRepository,
@@ -62,23 +64,28 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         return profileCandidateProvider.findByProfileId(profileId);
     }
 
-    public ProfileDTO assign(Long profileId, Collection<UserDTO> users, String assignedBy) {
+    public ProfileDTO assignByUUID(Long profileId, Collection<UUID> userUUIDs, String assignedBy) {
         final Profile profile = getProvider().findById(profileId).orElseThrow(()
                 -> new ProfileNotFoundException(this.getClass(), "No profile exists with id '" + profileId + "'."));
 
         final List<UUID> candidatesInProfile = profileCandidateProvider.findByProfileId(profileId).stream().map(profileCandidate ->
                 profileCandidate.getId().getUserUid()).toList();
 
-        users = users.stream().filter(userDTO -> !candidatesInProfile.contains(userDTO.getUUID())).toList();
+        userUUIDs = userUUIDs.stream().filter(userUUID -> !candidatesInProfile.contains(userUUID)).toList();
 
         //Store into the profile
         final List<ProfileCandidate> candidates = new ArrayList<>();
-        users.forEach(userDTO -> candidates.add(new ProfileCandidate(profileId, userDTO.getUUID())));
+        userUUIDs.forEach(userUUID -> candidates.add(new ProfileCandidate(profileId, userUUID)));
         profileCandidateProvider.saveAll(candidates);
 
         profile.setUpdatedBy(assignedBy);
 
         return convert(getProvider().save(profile));
+    }
+
+
+    public ProfileDTO assign(Long profileId, Collection<UserDTO> users, String assignedBy) {
+        return assignByUUID(profileId, users.stream().map(BasicUserDTO::getUUID).collect(Collectors.toSet()), assignedBy);
     }
 
 

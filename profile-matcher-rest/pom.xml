@@ -8,7 +8,7 @@
     <parent>
         <artifactId>profile-matcher</artifactId>
         <groupId>com.biit.profile</groupId>
-        <version>1.125</version>
+        <version>1.126-SNAPSHOT</version>
     </parent>
 
     <properties>

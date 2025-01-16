@@ -4,7 +4,7 @@
     <artifactId>profile-matcher</artifactId>
     <name>Profile Matcher</name>
     <groupId>com.biit.profile</groupId>
-    <version>1.147</version>
+    <version>1.148-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -23,7 +23,7 @@
     <scm>
         <connection>scm:git:git.biit-solutions.com:Java/ProfileMatcher.git</connection>
         <developerConnection>scm:git:git.biit-solutions.com:Java/ProfileMatcher.git</developerConnection>
-        <tag>profile-matcher-1.147</tag>
+        <tag>Profile Matcher</tag>
     </scm>
 
     <distributionManagement>

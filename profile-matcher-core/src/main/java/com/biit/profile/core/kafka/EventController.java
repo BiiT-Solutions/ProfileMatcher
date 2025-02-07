@@ -57,8 +57,7 @@ public class EventController {
 
             EventsLogger.info(this.getClass(), "Received new drools form from '{}'", createdBy);
 
-            cadtIndividualProfileController.newFormReceived(droolsForm);
-            //cadtScoreController.newFormReceived(droolsForm);
+            cadtIndividualProfileController.newFormReceived(droolsForm, event.getSessionId());
 
         } catch (JsonProcessingException e) {
             EventsLogger.severe(this.getClass(), "Event cannot be parsed!!\n" + event);

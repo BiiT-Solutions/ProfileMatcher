@@ -1,32 +1,46 @@
-package com.biit.profile.core.controllers;
+package com.biit.profile.core.providers;
 
 import com.biit.profile.core.exceptions.InvalidFormException;
 import com.biit.profile.core.metaviewer.Collection;
 import com.biit.profile.core.metaviewer.Facet;
 import com.biit.profile.core.metaviewer.FacetCategory;
 import com.biit.profile.core.metaviewer.Item;
+import com.biit.profile.core.metaviewer.ObjectMapperFactory;
 import com.biit.profile.core.metaviewer.types.BooleanType;
 import com.biit.profile.core.metaviewer.types.DateTimeType;
-import com.biit.profile.core.providers.CadtIndividualProfileProvider;
-import com.biit.profile.logger.ProfileLogger;
+import com.biit.profile.logger.MetaViewerLogger;
 import com.biit.profile.persistence.entities.cadt.CadtArchetype;
 import com.biit.profile.persistence.entities.cadt.CadtCompetence;
 import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
-import org.springframework.stereotype.Controller;
+import com.biit.profile.persistence.repositories.CadtIndividualProfileRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
-public class MetaviewerController {
+@Service
+public class MetaviewerProvider {
 
     public static final String FORM_NAME = "CADT_Score";
     private static final String PIVOTVIEWER_IMAGE_FILE = "./five_colors/five_colors.dzc";
 
     private static final String PIVOTVIEWER_LINK = "/cadt";
+    private static final String PIVOTVIEWER_FILE = "cadt-score.cxml";
+    private static final String METAVIEWER_FILE = "cadt-score.json";
+
 
     protected static final String CREATED_AT_FACET = "submittedAt";
 
@@ -41,27 +55,94 @@ public class MetaviewerController {
     private static final String LIGHT_GREEN_COLOR_TAG = "#4";
     private static final String DARK_GREEN_COLOR_TAG = "#5";
 
-    private final CadtIndividualProfileProvider cadtIndividualProfileProvider;
 
-    public MetaviewerController(CadtIndividualProfileProvider cadtIndividualProfileProvider) {
-        this.cadtIndividualProfileProvider = cadtIndividualProfileProvider;
+    @Value("${metaviewer.samples}")
+    private String outputFolder;
+
+    private final ObjectMapper objectMapper;
+
+    private final CadtIndividualProfileRepository cadtIndividualProfileRepository;
+
+    public MetaviewerProvider(ObjectMapper objectMapper,
+                              CadtIndividualProfileRepository cadtIndividualProfileRepository) {
+        this.objectMapper = objectMapper;
+        this.cadtIndividualProfileRepository = cadtIndividualProfileRepository;
     }
+
+    public synchronized void newFormReceived(CadtIndividualProfile cadtIndividualProfile) {
+        final StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        try {
+            Collection storedCollection = readSamplesFolder();
+            if (storedCollection != null) {
+                MetaViewerLogger.debug(this.getClass(), "Updating existing collection.");
+                updateCollection(storedCollection, cadtIndividualProfile);
+            } else {
+                MetaViewerLogger.debug(this.getClass(), "Creating a new collection.");
+                storedCollection = createCollection(cadtIndividualProfileRepository.findAll());
+            }
+            populateSamplesFolder(storedCollection);
+        } finally {
+            stopWatch.stop();
+            MetaViewerLogger.info(this.getClass(), "Collection updated in '" + stopWatch.getTotalTimeMillis() + "' ms");
+        }
+    }
+
+
+    public Collection createCollection(List<CadtIndividualProfile> cadtIndividualProfiles) {
+        final Collection collection = new Collection(FORM_NAME, PIVOTVIEWER_IMAGE_FILE);
+        MetaViewerLogger.debug(this.getClass(), "Creating a new collection with '{}' elements.", cadtIndividualProfiles.size());
+        collection.getFacetCategories().addAll(createCadtFacetsCategories());
+        for (CadtIndividualProfile cadtIndividualProfile : cadtIndividualProfiles) {
+            final Item item = generateItem(cadtIndividualProfile);
+            //If it has data, include it. All has submittedAt facet.
+            if (item.getFacets().size() > 1) {
+                collection.getItems().getItems().add(item);
+            }
+        }
+        collection.setCreatedAt(LocalDateTime.now());
+        return collection;
+    }
+
+
+    public void updateCollection(Collection collection, CadtIndividualProfile cadtIndividualProfiles) {
+        final Item item = generateItem(cadtIndividualProfiles);
+        //If it has data, include it. All has submittedAt facet.
+        if (item.getFacets().size() > 1) {
+            MetaViewerLogger.info(this.getClass(), "Adding one new item to collection.");
+            collection.getItems().getItems().add(item);
+        } else {
+            MetaViewerLogger.debug(this.getClass(), "No new data generated.");
+        }
+        collection.setCreatedAt(LocalDateTime.now());
+    }
+
+
+    public Collection readSamplesFolder() {
+        try {
+            return objectMapper.readValue(new File(outputFolder + File.separator + METAVIEWER_FILE), Collection.class);
+        } catch (IOException e) {
+            MetaViewerLogger.errorMessage(this.getClass(), e);
+            return null;
+        }
+    }
+
 
     public Collection getCollection() {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
-            return getCollection(cadtIndividualProfileProvider.getAll());
+            return getCollection(cadtIndividualProfileRepository.findAll());
         } finally {
             stopWatch.stop();
-            ProfileLogger.debug(this.getClass(), "Collection created in '" + stopWatch.getTotalTimeMillis() + "' ms");
+            MetaViewerLogger.debug(this.getClass(), "Collection created in '" + stopWatch.getTotalTimeMillis() + "' ms");
         }
     }
 
 
     public Collection getCollection(List<CadtIndividualProfile> cadtIndividualProfiles) {
         final Collection collection = new Collection(FORM_NAME, PIVOTVIEWER_IMAGE_FILE);
-        ProfileLogger.debug(this.getClass(), "Creating a new collection with '{}' elements.", cadtIndividualProfiles.size());
+        MetaViewerLogger.debug(this.getClass(), "Creating a new collection with '{}' elements.", cadtIndividualProfiles.size());
         collection.getFacetCategories().addAll(createCadtFacetsCategories());
         for (CadtIndividualProfile cadtIndividualProfile : cadtIndividualProfiles) {
             try {
@@ -71,7 +152,7 @@ public class MetaviewerController {
                     collection.getItems().getItems().add(item);
                 }
             } catch (InvalidProfileValueException e) {
-                ProfileLogger.warning(this.getClass(), "Invalid form found with session '"
+                MetaViewerLogger.warning(this.getClass(), "Invalid form found with session '"
                         + cadtIndividualProfile.getSession().toString() + "'.");
             }
         }
@@ -196,5 +277,29 @@ public class MetaviewerController {
             return LIGHT_GREEN_COLOR_TAG;
         }
         return DARK_GREEN_COLOR_TAG;
+    }
+
+    @Scheduled(cron = "@midnight")
+    public void populateSamplesFolder() {
+        try {
+            populateSamplesFolder(createCollection(cadtIndividualProfileRepository.findAll()));
+        } catch (Exception e) {
+            MetaViewerLogger.errorMessage(this.getClass(), e);
+        }
+    }
+
+    private void populateSamplesFolder(Collection collection) {
+        try {
+            try (PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFolder
+                    + File.separator + PIVOTVIEWER_FILE, false), StandardCharsets.UTF_8)))) {
+                out.println(ObjectMapperFactory.generateXml(collection));
+            }
+            try (PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFolder
+                    + File.separator + METAVIEWER_FILE, false), StandardCharsets.UTF_8)))) {
+                out.println(ObjectMapperFactory.generateJson(collection));
+            }
+        } catch (Exception e) {
+            MetaViewerLogger.errorMessage(this.getClass(), e);
+        }
     }
 }

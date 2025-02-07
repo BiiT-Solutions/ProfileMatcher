@@ -34,6 +34,10 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
+    <logger name="com.biit.profile.logger.MetaViewerLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DAILY"/>
+    </logger>
     <logger name="com.biit.profile.core.logger.TestLogging" additivity="false" level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </logger>

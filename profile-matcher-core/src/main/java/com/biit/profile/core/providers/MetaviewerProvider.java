@@ -128,6 +128,7 @@ public class MetaviewerProvider {
 
     public Collection readSamplesFolder() {
         try {
+            MetaViewerLogger.debug(this.getClass(), "Reading data stored on file '{}'.", outputFolder + File.separator + METAVIEWER_FILE);
             return objectMapper.readValue(new File(outputFolder + File.separator + METAVIEWER_FILE), Collection.class);
         } catch (IOException e) {
             MetaViewerLogger.errorMessage(this.getClass(), e);
@@ -140,6 +141,11 @@ public class MetaviewerProvider {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
+            final Collection collection = readSamplesFolder();
+            if (collection != null) {
+                MetaViewerLogger.debug(this.getClass(), "Returning data stored on file '{}'.", outputFolder + File.separator + METAVIEWER_FILE);
+                return collection;
+            }
             return getCollection(cadtIndividualProfileRepository.findAll());
         } finally {
             stopWatch.stop();

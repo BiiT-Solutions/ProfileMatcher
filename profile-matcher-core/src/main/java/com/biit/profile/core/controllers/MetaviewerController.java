@@ -12,6 +12,7 @@ import com.biit.profile.logger.ProfileLogger;
 import com.biit.profile.persistence.entities.cadt.CadtArchetype;
 import com.biit.profile.persistence.entities.cadt.CadtCompetence;
 import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
+import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StopWatch;
 
@@ -63,10 +64,15 @@ public class MetaviewerController {
         ProfileLogger.debug(this.getClass(), "Creating a new collection with '{}' elements.", cadtIndividualProfiles.size());
         collection.getFacetCategories().addAll(createCadtFacetsCategories());
         for (CadtIndividualProfile cadtIndividualProfile : cadtIndividualProfiles) {
-            final Item item = generateItem(cadtIndividualProfile);
-            //If it has data, include it. All has submittedAt facet.
-            if (item.getFacets().size() > 1) {
-                collection.getItems().getItems().add(item);
+            try {
+                final Item item = generateItem(cadtIndividualProfile);
+                //If it has data, include it. All has submittedAt facet.
+                if (item.getFacets().size() > 1) {
+                    collection.getItems().getItems().add(item);
+                }
+            } catch (InvalidProfileValueException e) {
+                ProfileLogger.warning(this.getClass(), "Invalid form found with session '"
+                        + cadtIndividualProfile.getSession().toString() + "'.");
             }
         }
         collection.setCreatedAt(LocalDateTime.now());

@@ -38,7 +38,6 @@ public class MetaviewerProvider {
     private static final String PIVOTVIEWER_IMAGE_FILE = "./five_colors/five_colors.dzc";
 
     private static final String PIVOTVIEWER_LINK = "/cadt";
-    private static final String PIVOTVIEWER_FILE = "cadt-score.cxml";
     private static final String METAVIEWER_FILE = "cadt-score.json";
 
 
@@ -290,10 +289,6 @@ public class MetaviewerProvider {
 
     private void populateSamplesFolder(Collection collection) {
         try {
-            try (PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFolder
-                    + File.separator + PIVOTVIEWER_FILE, false), StandardCharsets.UTF_8)))) {
-                out.println(ObjectMapperFactory.generateXml(collection));
-            }
             try (PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFolder
                     + File.separator + METAVIEWER_FILE, false), StandardCharsets.UTF_8)))) {
                 out.println(ObjectMapperFactory.generateJson(collection));

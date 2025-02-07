@@ -100,7 +100,7 @@ public class MetaviewerProvider {
                 if (item.getFacets().size() > 1) {
                     collection.getItems().getItems().add(item);
                 }
-            } catch (InvalidFormException e) {
+            } catch (InvalidFormException | InvalidProfileValueException e) {
                 MetaViewerLogger.errorMessage(this.getClass(), e);
             }
         }

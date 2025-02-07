@@ -8,10 +8,12 @@
         <groups>
             <run>
                 <include name="profileTest"/>
+                <include name="cadt"/>
             </run>
         </groups>
         <classes>
             <class name="com.biit.profile.core.ProfileTest"/>
+            <class name="com.biit.profile.core.cadt.CadtValueTest"/>
         </classes>
     </test>
 </suite>

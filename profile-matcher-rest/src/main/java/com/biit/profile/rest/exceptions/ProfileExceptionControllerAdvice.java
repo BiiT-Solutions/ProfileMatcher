@@ -2,6 +2,7 @@ package com.biit.profile.rest.exceptions;
 
 import com.biit.profile.core.exceptions.CandidateNotFoundException;
 import com.biit.profile.core.exceptions.CommentTooLongException;
+import com.biit.profile.core.exceptions.InvalidFormException;
 import com.biit.profile.core.exceptions.ProfileNotFoundException;
 import com.biit.profile.persistence.entities.ProfileCandidateComment;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
@@ -46,5 +47,11 @@ public class ProfileExceptionControllerAdvice extends ServerExceptionControllerA
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorResponse("Comment length exceeds the limit of '"
                 + ProfileCandidateComment.COMMENT_LENGTH + "' bytes", "comment_too_long", ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidFormException.class)
+    public ResponseEntity<Object> invalidFormException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_form", ex), HttpStatus.BAD_REQUEST);
     }
 }

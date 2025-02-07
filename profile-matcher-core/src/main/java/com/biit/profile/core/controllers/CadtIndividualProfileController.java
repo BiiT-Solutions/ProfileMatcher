@@ -59,6 +59,7 @@ public class CadtIndividualProfileController extends ElementController<CadtIndiv
         filter.put(SearchParameters.FACT_TYPE, FACT_TYPE);
         filter.put(SearchParameters.SUBJECT, FACT_SUBJECT);
         filter.put(SearchParameters.APPLICATION, FACT_APPLICATION);
+        filter.put(SearchParameters.LATEST_BY_USER, true);
 
         final List<FactDTO> facts = factClient.get(filter, null);
         final List<CadtIndividualProfile> profiles = new ArrayList<>();

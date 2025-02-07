@@ -1,5 +1,6 @@
 package com.biit.profile.persistence.entities.cadt;
 
+import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -35,6 +36,8 @@ public class CadtIndividualProfile extends Element<Long> {
 
     @Serial
     private static final long serialVersionUID = -2465157070391914318L;
+
+    private static final int SELECTED_COMPETENCES = 10;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -497,5 +500,111 @@ public class CadtIndividualProfile extends Element<Long> {
             case PLANIFICATION -> setPlanning(true);
             default -> throw new IllegalStateException("Unexpected value: " + competence);
         }
+    }
+
+    public void validate() throws InvalidProfileValueException {
+        if (getReceptive() == null) {
+            throw new InvalidProfileValueException("Archetypes 'receptive' is null.");
+        }
+        if (getInnovator() == null) {
+            throw new InvalidProfileValueException("Archetypes 'innovator' is null.");
+        }
+        if (getStrategist() == null) {
+            throw new InvalidProfileValueException("Archetypes 'strategist' is null.");
+        }
+        if (getVisionary() == null) {
+            throw new InvalidProfileValueException("Archetypes 'visionary' is null.");
+        }
+        if (getLeader() == null) {
+            throw new InvalidProfileValueException("Archetypes 'leader' is null.");
+        }
+        if (getBanker() == null) {
+            throw new InvalidProfileValueException("Archetypes 'banker' is null.");
+        }
+        if (getScientist() == null) {
+            throw new InvalidProfileValueException("Archetypes 'scientist' is null.");
+        }
+        if (getTradesman() == null) {
+            throw new InvalidProfileValueException("Archetypes 'tradesman' is null.");
+        }
+
+        int competences = 0;
+        if (isDiscipline()) {
+            competences++;
+        }
+        if (isClientOriented()) {
+            competences++;
+        }
+        if (isEngagement()) {
+            competences++;
+        }
+        if (isCooperation()) {
+            competences++;
+        }
+        if (isLeadership()) {
+            competences++;
+        }
+        if (isRelationships()) {
+            competences++;
+        }
+        if (isDirection()) {
+            competences++;
+        }
+        if (isMulticulturalSensitivity()) {
+            competences++;
+        }
+        if (isJudgement()) {
+            competences++;
+        }
+        if (isIndependence()) {
+            competences++;
+        }
+        if (isInitiative()) {
+            competences++;
+        }
+        if (isGoalSetting()) {
+            competences++;
+        }
+        if (isDecisiveness()) {
+            competences++;
+        }
+        if (isFuture()) {
+            competences++;
+        }
+        if (isCommunicationSkills()) {
+            competences++;
+        }
+        if (isBusinessMinded()) {
+            competences++;
+        }
+        if (isTenacity()) {
+            competences++;
+        }
+        if (isConscientiousness()) {
+            competences++;
+        }
+        if (isInterpersonalSensitivity()) {
+            competences++;
+        }
+        if (isFlexibility()) {
+            competences++;
+        }
+        if (isPersuasiveness()) {
+            competences++;
+        }
+        if (isInnovation()) {
+            competences++;
+        }
+        if (isProblemAnalysis()) {
+            competences++;
+        }
+        if (isPlanning()) {
+            competences++;
+        }
+
+        if (competences != SELECTED_COMPETENCES) {
+            throw new InvalidProfileValueException("Competences must be " + SELECTED_COMPETENCES);
+        }
+
     }
 }

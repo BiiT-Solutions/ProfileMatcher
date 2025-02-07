@@ -283,6 +283,8 @@ public class MetaviewerProvider {
     public void populateSamplesFolder() {
         try {
             populateSamplesFolder(createCollection(cadtIndividualProfileRepository.findAll()));
+        } catch (InvalidProfileValueException e) {
+            MetaViewerLogger.severe("Invalid form created: ", e.getMessage());
         } catch (Exception e) {
             MetaViewerLogger.errorMessage(this.getClass(), e);
         }

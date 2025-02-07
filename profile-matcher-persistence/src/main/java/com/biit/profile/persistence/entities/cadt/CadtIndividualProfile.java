@@ -153,7 +153,7 @@ public class CadtIndividualProfile extends Element<Long> {
     @Column(name = "form_version", nullable = false)
     private int formVersion;
 
-    @Column(name = "session", nullable = false, unique = true)
+    @Column(name = "session")
     private UUID session;
 
     @Column(name = "score", nullable = false)

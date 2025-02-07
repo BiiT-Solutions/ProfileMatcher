@@ -1,7 +1,6 @@
 package com.biit.profile.rest;
 
 import com.biit.profile.logger.ProfileLogger;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.modelmapper.ModelMapper;
@@ -27,7 +26,8 @@ import org.springframework.web.servlet.DispatcherServlet;
         @PropertySource("classpath:application.properties"),
         @PropertySource(value = "file:${EXTERNAL_CONFIG_FILE}", ignoreResourceNotFound = true)
 })
-@ComponentScan({"com.biit.profile", "com.biit.server.security", "com.biit.server", "com.biit.messagebird.client", "com.biit.usermanager.client"})
+@ComponentScan({"com.biit.profile", "com.biit.server.security", "com.biit.server", "com.biit.messagebird.client", "com.biit.usermanager.client",
+        "com.biit.factmanager.client", "com.biit.kafka"})
 @ConfigurationPropertiesScan({"com.biit.profile.rest"})
 @EntityScan({"com.biit.profile.persistence.entities", "com.biit.server"})
 public class ServicesServer {

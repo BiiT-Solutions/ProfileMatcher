@@ -1,6 +1,7 @@
 package com.biit.profile.rest.api;
 
 
+import com.biit.profile.core.controllers.CadtIndividualProfileController;
 import com.biit.profile.core.metaviewer.Collection;
 import com.biit.profile.core.metaviewer.ObjectMapperFactory;
 import com.biit.profile.core.providers.MetaviewerProvider;
@@ -20,9 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/metaviewer")
 public class MetaviewerServices {
 
+    private final CadtIndividualProfileController cadtIndividualProfileController;
     private final MetaviewerProvider metaviewerProvider;
 
-    public MetaviewerServices(MetaviewerProvider metaviewerProvider) {
+    public MetaviewerServices(CadtIndividualProfileController cadtIndividualProfileController,
+                              MetaviewerProvider metaviewerProvider) {
+        this.cadtIndividualProfileController = cadtIndividualProfileController;
         this.metaviewerProvider = metaviewerProvider;
     }
 
@@ -46,6 +50,7 @@ public class MetaviewerServices {
     @Operation(summary = "Regenerates CADT result as and json and stores it to a file.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/refresh", produces = MediaType.APPLICATION_ATOM_XML_VALUE)
     public void refresh(Authentication authentication, HttpServletResponse response) {
+        cadtIndividualProfileController.updateFromFactManager();
         metaviewerProvider.populateSamplesFolder();
     }
 

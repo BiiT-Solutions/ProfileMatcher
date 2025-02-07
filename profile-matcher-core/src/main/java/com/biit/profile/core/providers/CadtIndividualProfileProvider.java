@@ -56,7 +56,7 @@ public class CadtIndividualProfileProvider extends ElementProvider<CadtIndividua
                 selectedArchetypes.add(archetype);
             }
             if (Objects.equals(question.getName(), CadtQuestion.QUESTION2.getTag())) {
-                assignCard(archetype, CardSelection.DISCARDED, cadtIndividualProfile);
+                assignCard(archetype, CardSelection.SHADOWED, cadtIndividualProfile);
                 selectedArchetypes.add(archetype);
             }
             if (Objects.equals(question.getName(), CadtQuestion.QUESTION3.getTag())) {
@@ -69,7 +69,7 @@ public class CadtIndividualProfileProvider extends ElementProvider<CadtIndividua
                 selectedArchetypes.add(archetype);
             }
             if (Objects.equals(question.getName(), CadtQuestion.QUESTION5.getTag())) {
-                assignCard(archetype, CardSelection.DISCARDED, cadtIndividualProfile);
+                assignCard(archetype, CardSelection.SHADOWED, cadtIndividualProfile);
                 selectedArchetypes.add(archetype);
             }
             if (Objects.equals(question.getName(), CadtQuestion.QUESTION6.getTag())) {
@@ -109,16 +109,6 @@ public class CadtIndividualProfileProvider extends ElementProvider<CadtIndividua
 
     private void assignScore(CadtIndividualProfile cadtIndividualProfile, Map<String, Object> formVariables) {
         cadtIndividualProfile.setScore((double) formVariables.get(FORM_SCORE_VARIABLE));
-    }
-
-
-    public CadtIndividualProfile updateScore(UUID session, Double score) {
-        final Optional<CadtIndividualProfile> profile = getRepository().findBySession(session);
-        if (profile.isPresent()) {
-            profile.get().setScore(score);
-            return getRepository().save(profile.get());
-        }
-        return null;
     }
 
 

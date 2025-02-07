@@ -12,6 +12,4 @@ import java.util.UUID;
 @Transactional
 public interface CadtIndividualProfileRepository extends ElementRepository<CadtIndividualProfile, Long> {
 
-
-    Optional<CadtIndividualProfile> findBySession(UUID session);
 }

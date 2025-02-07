@@ -38,6 +38,10 @@
             <artifactId>kafka-client-dto</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.biit</groupId>
+            <artifactId>fact-manager-rest-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>

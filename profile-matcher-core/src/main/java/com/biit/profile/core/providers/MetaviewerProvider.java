@@ -94,10 +94,14 @@ public class MetaviewerProvider {
         MetaViewerLogger.debug(this.getClass(), "Creating a new collection with '{}' elements.", cadtIndividualProfiles.size());
         collection.getFacetCategories().addAll(createCadtFacetsCategories());
         for (CadtIndividualProfile cadtIndividualProfile : cadtIndividualProfiles) {
-            final Item item = generateItem(cadtIndividualProfile);
-            //If it has data, include it. All has submittedAt facet.
-            if (item.getFacets().size() > 1) {
-                collection.getItems().getItems().add(item);
+            try {
+                final Item item = generateItem(cadtIndividualProfile);
+                //If it has data, include it. All has submittedAt facet.
+                if (item.getFacets().size() > 1) {
+                    collection.getItems().getItems().add(item);
+                }
+            } catch (InvalidFormException e) {
+                MetaViewerLogger.errorMessage(this.getClass(), e);
             }
         }
         collection.setCreatedAt(LocalDateTime.now());
@@ -106,15 +110,19 @@ public class MetaviewerProvider {
 
 
     public void updateCollection(Collection collection, CadtIndividualProfile cadtIndividualProfiles) {
-        final Item item = generateItem(cadtIndividualProfiles);
-        //If it has data, include it. All has submittedAt facet.
-        if (item.getFacets().size() > 1) {
-            MetaViewerLogger.info(this.getClass(), "Adding one new item to collection.");
-            collection.getItems().getItems().add(item);
-        } else {
-            MetaViewerLogger.debug(this.getClass(), "No new data generated.");
+        try {
+            final Item item = generateItem(cadtIndividualProfiles);
+            //If it has data, include it. All has submittedAt facet.
+            if (item.getFacets().size() > 1) {
+                MetaViewerLogger.info(this.getClass(), "Adding one new item to collection.");
+                collection.getItems().getItems().add(item);
+            } else {
+                MetaViewerLogger.debug(this.getClass(), "No new data generated.");
+            }
+            collection.setCreatedAt(LocalDateTime.now());
+        } catch (InvalidFormException e) {
+            MetaViewerLogger.errorMessage(this.getClass(), e);
         }
-        collection.setCreatedAt(LocalDateTime.now());
     }
 
 
@@ -283,8 +291,6 @@ public class MetaviewerProvider {
     public void populateSamplesFolder() {
         try {
             populateSamplesFolder(createCollection(cadtIndividualProfileRepository.findAll()));
-        } catch (InvalidProfileValueException e) {
-            MetaViewerLogger.severe("Invalid form created: ", e.getMessage());
         } catch (Exception e) {
             MetaViewerLogger.errorMessage(this.getClass(), e);
         }
@@ -292,6 +298,8 @@ public class MetaviewerProvider {
 
     private void populateSamplesFolder(Collection collection) {
         try {
+            MetaViewerLogger.debug(this.getClass(), "Populating folder '{}' with '{}' items.", outputFolder
+                    + File.separator + PIVOTVIEWER_FILE, collection.getItems().getItems().size());
             try (PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFolder
                     + File.separator + PIVOTVIEWER_FILE, false), StandardCharsets.UTF_8)))) {
                 out.println(ObjectMapperFactory.generateXml(collection));

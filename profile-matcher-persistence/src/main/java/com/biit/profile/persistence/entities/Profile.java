@@ -2,8 +2,11 @@ package com.biit.profile.persistence.entities;
 
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.drools.form.DroolsSubmittedForm;
+import com.biit.drools.form.DroolsSubmittedQuestion;
 import com.biit.kafka.config.ObjectMapperFactory;
 import com.biit.profile.logger.ProfileLogger;
+import com.biit.profile.persistence.entities.cadt.CadtCompetence;
+import com.biit.profile.persistence.entities.cadt.CadtQuestion;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
 import com.biit.server.persistence.entities.Element;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,6 +24,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Cacheable
@@ -127,9 +133,10 @@ public class Profile extends Element<Long> {
 
     @JsonIgnore
     public DroolsSubmittedForm getEntity() {
-        if (getContent() != null && !getContent().isEmpty()) {
+        if (getEntity() == null && !getContent().isEmpty()) {
             try {
-                entity = ObjectMapperFactory.getObjectMapper().readValue(getContent(), getJsonParser());
+                entity = ObjectMapperFactory.getObjectMapper().readValue(getContent(), new TypeReference<>() {
+                });
             } catch (JsonProcessingException e) {
                 ProfileLogger.errorMessage(this.getClass(), e);
                 throw new InvalidProfileValueException(e);
@@ -138,9 +145,23 @@ public class Profile extends Element<Long> {
         return entity;
     }
 
+    public List<CadtCompetence> getDesiredCompetences() {
+        final DroolsSubmittedForm submittedForm = getEntity();
+        if (submittedForm == null) {
+            throw new InvalidProfileValueException("No drools form found!");
+        }
 
-    protected TypeReference<DroolsSubmittedForm> getJsonParser() {
-        return new TypeReference<>() {
-        };
+        final DroolsSubmittedQuestion questionWithCompetences = submittedForm.getSubmittedForm().getChild(DroolsSubmittedQuestion.class, CadtQuestion.COMPETENCES.getTag());
+        final List<CadtCompetence> competences = new ArrayList<>();
+        for (String answer : questionWithCompetences.getAnswers()) {
+            final CadtCompetence competence = CadtCompetence.fromTag(answer);
+            if (competence == null) {
+                throw new InvalidProfileValueException("Invalid competence '" + competence + "' found!");
+            }
+            competences.add(competence);
+        }
+        return competences;
+
     }
+
 }

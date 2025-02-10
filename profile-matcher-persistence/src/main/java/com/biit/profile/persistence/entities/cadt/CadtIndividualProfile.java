@@ -16,6 +16,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.io.Serial;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -38,6 +41,7 @@ public class CadtIndividualProfile extends Element<Long> {
     private static final long serialVersionUID = -2465157070391914318L;
 
     private static final int SELECTED_COMPETENCES = 10;
+    private static final int ARCHETYPES_BY_GROUP = 4;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -147,7 +151,7 @@ public class CadtIndividualProfile extends Element<Long> {
     @Column(name = "planning", nullable = false)
     private boolean planning = false;
 
-    @Column(name = "drools_id", nullable = false)
+    @Column(name = "drools_id")
     private String droolsId;
 
     @Column(name = "form_version", nullable = false)
@@ -159,6 +163,10 @@ public class CadtIndividualProfile extends Element<Long> {
     @Column(name = "score", nullable = false)
     private Double score;
 
+    public CadtIndividualProfile() {
+        this.score = 0d;
+        this.formVersion = 1;
+    }
 
     @Override
     public Long getId() {
@@ -459,16 +467,18 @@ public class CadtIndividualProfile extends Element<Long> {
     }
 
     public void assignCard(CadtArchetype archetype, CardSelection cardSelection) {
-        switch (archetype) {
-            case RECEPTIVE -> setReceptive(cardSelection);
-            case INNOVATOR -> setInnovator(cardSelection);
-            case STRATEGIST -> setStrategist(cardSelection);
-            case VISIONARY -> setVisionary(cardSelection);
-            case LEADER -> setLeader(cardSelection);
-            case BANKER -> setBanker(cardSelection);
-            case SCIENTIST -> setScientist(cardSelection);
-            case TRADESMAN -> setTradesman(cardSelection);
-            default -> throw new IllegalStateException("Unexpected value: " + archetype);
+        if (archetype != null) {
+            switch (archetype) {
+                case RECEPTIVE -> setReceptive(cardSelection);
+                case INNOVATOR -> setInnovator(cardSelection);
+                case STRATEGIST -> setStrategist(cardSelection);
+                case VISIONARY -> setVisionary(cardSelection);
+                case LEADER -> setLeader(cardSelection);
+                case BANKER -> setBanker(cardSelection);
+                case SCIENTIST -> setScientist(cardSelection);
+                case TRADESMAN -> setTradesman(cardSelection);
+                default -> throw new IllegalStateException("Unexpected value: " + archetype);
+            }
         }
     }
 
@@ -526,6 +536,17 @@ public class CadtIndividualProfile extends Element<Long> {
         }
         if (getTradesman() == null) {
             throw new InvalidProfileValueException("Archetypes 'tradesman' is null.");
+        }
+
+        final Set<CardSelection> feminineSelections = new HashSet<>(List.of(getReceptive(), getInnovator(), getStrategist(), getVisionary()));
+        final Set<CardSelection> maleSelections = new HashSet<>(List.of(getLeader(), getBanker(), getScientist(), getTradesman()));
+
+        if (feminineSelections.size() < ARCHETYPES_BY_GROUP) {
+            throw new InvalidProfileValueException("Archetypes selection malformed. Current selections are '" + feminineSelections + "'.");
+        }
+
+        if (maleSelections.size() < ARCHETYPES_BY_GROUP) {
+            throw new InvalidProfileValueException("Archetypes selection malformed. Current selections are '" + maleSelections + "'.");
         }
 
         int competences = 0;

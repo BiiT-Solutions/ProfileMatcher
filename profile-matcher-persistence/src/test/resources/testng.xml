@@ -1,17 +1,21 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite thread-count="1" verbose="1" name="Profile Matcher">
     <listeners>
-        <listener class-name="com.biit.profile.persistence.TestListener"></listener>
+        <listener class-name="com.biit.profile.persistence.TestListener" />
     </listeners>
 
     <test name="Profile Matcher" enabled="true" preserve-order="true">
         <groups>
             <run>
                 <include name="ProfileRepository"/>
+                <include name="CadtIndividualProfileRepository"/>
+                <include name="CadtIndividualProfileValidation"/>
             </run>
         </groups>
         <classes>
             <class name="com.biit.profile.persistence.repositories.ProfileRepositoryTests"/>
+            <class name="com.biit.profile.persistence.repositories.CadtIndividualProfileValidationTest"/>
+            <class name="com.biit.profile.persistence.repositories.CadtIndividualProfileRepositoryTest"/>
         </classes>
     </test>
 </suite>

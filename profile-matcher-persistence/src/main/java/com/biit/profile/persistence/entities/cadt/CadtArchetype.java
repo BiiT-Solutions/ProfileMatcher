@@ -3,12 +3,12 @@ package com.biit.profile.persistence.entities.cadt;
 public enum CadtArchetype {
     RECEPTIVE("receptive"),
     INNOVATOR("innovator"),
-    STRATEGIST("strategist"),
     VISIONARY("visionary"),
-    LEADER("leader"),
+    STRATEGIST("strategist"),
     BANKER("banker"),
+    TRADESMAN("tradesman"),
     SCIENTIST("scientist"),
-    TRADESMAN("tradesman");
+    LEADER("leader");
 
     private final String tag;
 

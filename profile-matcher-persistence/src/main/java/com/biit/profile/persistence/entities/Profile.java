@@ -151,12 +151,13 @@ public class Profile extends Element<Long> {
             throw new InvalidProfileValueException("No drools form found!");
         }
 
-        final DroolsSubmittedQuestion questionWithCompetences = submittedForm.getSubmittedForm().getChild(DroolsSubmittedQuestion.class, CadtQuestion.COMPETENCES.getTag());
+        final DroolsSubmittedQuestion questionWithCompetences = submittedForm.getSubmittedForm()
+                .getChild(DroolsSubmittedQuestion.class, CadtQuestion.COMPETENCES.getTag());
         final List<CadtCompetence> competences = new ArrayList<>();
         for (String answer : questionWithCompetences.getAnswers()) {
             final CadtCompetence competence = CadtCompetence.fromTag(answer);
             if (competence == null) {
-                throw new InvalidProfileValueException("Invalid competence '" + competence + "' found!");
+                throw new InvalidProfileValueException("Invalid competence '" + answer + "' found!");
             }
             competences.add(competence);
         }

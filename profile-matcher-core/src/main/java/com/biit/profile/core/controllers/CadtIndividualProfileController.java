@@ -87,4 +87,12 @@ public class CadtIndividualProfileController extends ElementController<CadtIndiv
             ProfileLogger.errorMessage(this.getClass(), e);
         }
     }
+
+
+    public List<CadtIndividualProfileDTO> findByCompetencesIn(List<String> competences, int threshold, String searchedBy) {
+        ProfileLogger.debug(this.getClass(), "User '{}' is searching for profiles with '{}' competences.", searchedBy, competences);
+        final List<CadtIndividualProfileDTO> matchingCompetences = convertAll(getProvider().findByCompetencesIn(competences, threshold));
+        ProfileLogger.debug(this.getClass(), "Found '{}' profiles.", matchingCompetences.size());
+        return matchingCompetences;
+    }
 }

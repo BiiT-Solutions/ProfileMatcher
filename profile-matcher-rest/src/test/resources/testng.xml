@@ -9,11 +9,13 @@
             <run>
                 <include name="profileServices"/>
                 <include name="profileCandidateCommentServices"/>
+                <include name="cadtIndividualProfileServices"/>
             </run>
         </groups>
         <classes>
             <class name="com.biit.profile.test.api.ProfilesServicesTests"/>
             <class name="com.biit.profile.test.api.ProfilesCandidatesCommentsServicesTests"/>
+            <class name="com.biit.profile.test.api.CadtIndividualProfilesServicesTests"/>
         </classes>
     </test>
 </suite>

@@ -111,4 +111,9 @@ public class CadtIndividualProfileProvider extends ElementProvider<CadtIndividua
     }
 
 
+    public List<CadtIndividualProfile> findByCompetencesIn(List<String> competences, int threshold) {
+        return getRepository().findByCompetencesIn(competences, threshold);
+    }
+
+
 }

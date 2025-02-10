@@ -133,7 +133,7 @@ public class Profile extends Element<Long> {
 
     @JsonIgnore
     public DroolsSubmittedForm getEntity() {
-        if (getEntity() == null && !getContent().isEmpty()) {
+        if (entity == null && !getContent().isEmpty()) {
             try {
                 entity = ObjectMapperFactory.getObjectMapper().readValue(getContent(), new TypeReference<>() {
                 });

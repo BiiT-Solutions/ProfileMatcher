@@ -70,10 +70,35 @@ public class CadtIndividualProfileRepositoryTest extends AbstractTestNGSpringCon
 
 
     @Test
-    public void findBy10Competences() {
+    public void findBy10From10Competences() {
         Assert.assertEquals(repository.findByCompetencesIn(List.of(
-                CadtCompetence.BUSINESS_MINDED.name(), CadtCompetence.COMMUNICATION_SKILLS.name(), CadtCompetence.DIRECTION.name(), CadtCompetence.FUTURE.name(), CadtCompetence.INITIATIVE.name(),
-                CadtCompetence.COOPERATION.name(), CadtCompetence.LEADERSHIP.name(), CadtCompetence.TENACITY.name(), CadtCompetence.MULTICULTURAL_SENSITIVITY.name(), CadtCompetence.FLEXIBILITY.name()
+                CadtCompetence.BUSINESS_MINDED.getTag(), CadtCompetence.COMMUNICATION_SKILLS.getTag(), CadtCompetence.DIRECTION.getTag(), CadtCompetence.FUTURE.getTag(), CadtCompetence.INITIATIVE.getTag(),
+                CadtCompetence.COOPERATION.getTag(), CadtCompetence.LEADERSHIP.getTag(), CadtCompetence.TENACITY.getTag(), CadtCompetence.MULTICULTURAL_SENSITIVITY.getTag(), CadtCompetence.FLEXIBILITY.getTag()
         ), 10).size(), 1);
+    }
+
+
+    @Test
+    public void findBy9From9Competences() {
+        Assert.assertEquals(repository.findByCompetencesIn(List.of(
+                CadtCompetence.BUSINESS_MINDED.getTag(), CadtCompetence.COMMUNICATION_SKILLS.getTag(), CadtCompetence.DIRECTION.getTag(), CadtCompetence.FUTURE.getTag(), CadtCompetence.INITIATIVE.getTag(),
+                CadtCompetence.COOPERATION.getTag(), CadtCompetence.LEADERSHIP.getTag(), CadtCompetence.TENACITY.getTag(), CadtCompetence.MULTICULTURAL_SENSITIVITY.getTag()
+        ), 9).size(), 1);
+    }
+
+    @Test
+    public void notFindBy10From9Competences() {
+        Assert.assertEquals(repository.findByCompetencesIn(List.of(
+                CadtCompetence.BUSINESS_MINDED.getTag(), CadtCompetence.COMMUNICATION_SKILLS.getTag(), CadtCompetence.DIRECTION.getTag(), CadtCompetence.FUTURE.getTag(), CadtCompetence.INITIATIVE.getTag(),
+                CadtCompetence.COOPERATION.getTag(), CadtCompetence.LEADERSHIP.getTag(), CadtCompetence.TENACITY.getTag(), CadtCompetence.MULTICULTURAL_SENSITIVITY.getTag()
+        ), 10).size(), 0);
+    }
+
+    @Test
+    public void findBy3From4Competences() {
+        //2 competences all 3, 1 only 2, the other only 2.
+        Assert.assertEquals(repository.findByCompetencesIn(List.of(
+                CadtCompetence.INITIATIVE.getTag(), CadtCompetence.FLEXIBILITY.getTag(), CadtCompetence.GOAL_SETTING.getTag(), CadtCompetence.COOPERATION.getTag()
+        ), 3).size(), 3);
     }
 }

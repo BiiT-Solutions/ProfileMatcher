@@ -42,7 +42,18 @@ public class CadtIndividualProfileServices extends ElementServices<CadtIndividua
             @Parameter(name = "List of matching competences", required = false) @RequestParam(value = "competence", required = false) List<String> competences,
             @Parameter(description = "Minimum competence number to match", required = true) @PathVariable("threshold") int threshold,
             Authentication authentication, HttpServletRequest request) {
-        return getController().findByCompetencesIn(competences, threshold, authentication.getName());
+        return getController().findByCompetenceTagsIn(competences, threshold, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a list of candidates that matches a profile.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/profiles/{profileId}/thresholds/{threshold}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CadtIndividualProfileDTO> getByprofile(
+            @Parameter(description = "Profile Id", required = true) @PathVariable("profileId") long profileId,
+            @Parameter(description = "Minimum competence number to match", required = true) @PathVariable("threshold") int threshold,
+            Authentication authentication, HttpServletRequest request) {
+        return getController().findByProfile(profileId, threshold, authentication.getName());
     }
 
 

@@ -4,15 +4,19 @@ package com.biit.profile.core.controllers;
 import com.biit.kafka.controllers.KafkaElementController;
 import com.biit.profile.core.converters.ProfileConverter;
 import com.biit.profile.core.converters.models.ProfileConverterRequest;
+import com.biit.profile.core.exceptions.CandidateNotFoundException;
 import com.biit.profile.core.exceptions.ProfileNotFoundException;
 import com.biit.profile.core.kafka.ProfileEventSender;
 import com.biit.profile.core.models.ProfileDTO;
+import com.biit.profile.core.providers.CadtIndividualProfileProvider;
 import com.biit.profile.core.providers.ProfileCandidateCommentProvider;
 import com.biit.profile.core.providers.ProfileCandidateProvider;
 import com.biit.profile.core.providers.ProfileProvider;
 import com.biit.profile.logger.ProfileLogger;
 import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.entities.ProfileCandidate;
+import com.biit.profile.persistence.entities.cadt.CadtCompetence;
+import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.profile.persistence.repositories.ProfileRepository;
 import com.biit.usermanager.dto.BasicUserDTO;
 import com.biit.usermanager.dto.UserDTO;
@@ -32,14 +36,17 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
 
     private final ProfileCandidateProvider profileCandidateProvider;
     private final ProfileCandidateCommentProvider profileCandidateCommentProvider;
+    private final CadtIndividualProfileProvider cadtIndividualProfileProvider;
 
     @Autowired
     protected ProfileController(ProfileProvider provider, ProfileConverter converter, ProfileEventSender eventSender,
                                 ProfileCandidateProvider profileCandidateProvider,
-                                ProfileCandidateCommentProvider profileCandidateCommentProvider) {
+                                ProfileCandidateCommentProvider profileCandidateCommentProvider,
+                                CadtIndividualProfileProvider cadtIndividualProfileProvider) {
         super(provider, converter, eventSender);
         this.profileCandidateProvider = profileCandidateProvider;
         this.profileCandidateCommentProvider = profileCandidateCommentProvider;
+        this.cadtIndividualProfileProvider = cadtIndividualProfileProvider;
     }
 
     @Override
@@ -109,10 +116,22 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         return convert(getProvider().save(profile));
     }
 
-    public List<ProfileDTO> findByCompetencesIn(List<String> competences, int threshold, String searchedBy) {
+    public List<ProfileDTO> findByCompetencesIn(Collection<CadtCompetence> competences, int threshold, String searchedBy) {
+        return findByCompetenceTagsIn(competences.stream().map(CadtCompetence::getTag).toList(), threshold, searchedBy);
+    }
+
+
+    public List<ProfileDTO> findByCompetenceTagsIn(Collection<String> competences, int threshold, String searchedBy) {
         ProfileLogger.debug(this.getClass(), "User '{}' is searching for profiles with '{}' competences.", searchedBy, competences);
         final List<ProfileDTO> matchingCompetences = convertAll(getProvider().findByCompetencesIn(competences, threshold));
         ProfileLogger.debug(this.getClass(), "Found '{}' profiles.", matchingCompetences.size());
         return matchingCompetences;
+    }
+
+
+    public List<ProfileDTO> findByCandidate(Long candidateProfileId, int threshold, String searchedBy) {
+        final CadtIndividualProfile cadtIndividualProfile = cadtIndividualProfileProvider.findById(candidateProfileId)
+                .orElseThrow(() -> new CandidateNotFoundException(this.getClass(), "No candidates with id '" + candidateProfileId + "' found!"));
+        return findByCompetencesIn(cadtIndividualProfile.getSelectedCompetences(), threshold, searchedBy);
     }
 }

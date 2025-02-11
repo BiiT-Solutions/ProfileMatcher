@@ -10,6 +10,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.io.Serial;
+import java.util.HashSet;
+import java.util.Set;
 
 @MappedSuperclass
 @Cacheable
@@ -339,6 +341,84 @@ public abstract class SearchableCompetences<KEY> extends Element<KEY> {
             case PLANIFICATION -> setPlanning(true);
             default -> throw new IllegalStateException("Unexpected value: " + competence);
         }
+    }
+
+
+    public Set<CadtCompetence> getSelectedCompetences() {
+        final Set<CadtCompetence> competences = new HashSet<>();
+        if (isDiscipline()) {
+            competences.add(CadtCompetence.DISCIPLINE);
+        }
+        if (isClientOriented()) {
+            competences.add(CadtCompetence.CLIENT_ORIENTED);
+        }
+        if (isEngagement()) {
+            competences.add(CadtCompetence.ENGAGEMENT);
+        }
+        if (isCooperation()) {
+            competences.add(CadtCompetence.COOPERATION);
+        }
+        if (isLeadership()) {
+            competences.add(CadtCompetence.LEADERSHIP);
+        }
+        if (isRelationships()) {
+            competences.add(CadtCompetence.RELATIONSHIPS);
+        }
+        if (isDirection()) {
+            competences.add(CadtCompetence.DIRECTION);
+        }
+        if (isMulticulturalSensitivity()) {
+            competences.add(CadtCompetence.MULTICULTURAL_SENSITIVITY);
+        }
+        if (isJudgement()) {
+            competences.add(CadtCompetence.JUDGEMENT);
+        }
+        if (isIndependence()) {
+            competences.add(CadtCompetence.INDEPENDENCE);
+        }
+        if (isInitiative()) {
+            competences.add(CadtCompetence.INITIATIVE);
+        }
+        if (isGoalSetting()) {
+            competences.add(CadtCompetence.GOAL_SETTING);
+        }
+        if (isDecisiveness()) {
+            competences.add(CadtCompetence.DECISIVENESS);
+        }
+        if (isFuture()) {
+            competences.add(CadtCompetence.FUTURE);
+        }
+        if (isCommunicationSkills()) {
+            competences.add(CadtCompetence.COMMUNICATION_SKILLS);
+        }
+        if (isBusinessMinded()) {
+            competences.add(CadtCompetence.BUSINESS_MINDED);
+        }
+        if (isTenacity()) {
+            competences.add(CadtCompetence.TENACITY);
+        }
+        if (isConscientiousness()) {
+            competences.add(CadtCompetence.CONSCIENTIOUSNESS);
+        }
+        if (isInterpersonalSensitivity()) {
+            competences.add(CadtCompetence.INTERPERSONAL_SENSITIVITY);
+        }
+        if (isFlexibility()) {
+            competences.add(CadtCompetence.FLEXIBILITY);
+        }
+        if (isPersuasiveness()) {
+            competences.add(CadtCompetence.PERSUASIVENESS);
+        }
+        if (isInnovation()) {
+            competences.add(CadtCompetence.INNOVATION);
+        }
+        if (isProblemAnalysis()) {
+            competences.add(CadtCompetence.PROBLEM_ANALYSIS);
+        }
+        if (isPlanning()) {
+            competences.add(CadtCompetence.PLANIFICATION);
+        }
+        return competences;
     }
 
 }

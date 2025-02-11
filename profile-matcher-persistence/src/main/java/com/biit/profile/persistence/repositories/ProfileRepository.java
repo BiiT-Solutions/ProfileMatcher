@@ -1,12 +1,12 @@
 package com.biit.profile.persistence.repositories;
 
 import com.biit.profile.persistence.entities.Profile;
-import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.server.persistence.repositories.ElementRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,6 +48,6 @@ public interface ProfileRepository extends ElementRepository<Profile, Long> {
                   (CASE WHEN p.problemAnalysis = true AND 'problem-analysis' IN :competences THEN 1 ELSE 0 END) +
                   (CASE WHEN p.planning = true AND 'planification' IN :competences THEN 1 ELSE 0 END)) >= :threshold
             """)
-    List<Profile> findByCompetencesIn(List<String> competences, int threshold);
+    List<Profile> findByCompetencesIn(Collection<String> competences, int threshold);
 
 }

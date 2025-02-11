@@ -1,14 +1,17 @@
 package com.biit.profile.test.api;
 
+import com.biit.drools.form.DroolsSubmittedForm;
 import com.biit.profile.core.models.CadtIndividualProfileDTO;
-import com.biit.profile.core.models.ProfileDTO;
+import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.entities.cadt.CadtArchetype;
 import com.biit.profile.persistence.entities.cadt.CadtCompetence;
 import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.profile.persistence.entities.cadt.CardSelection;
 import com.biit.profile.persistence.repositories.CadtIndividualProfileRepository;
+import com.biit.profile.persistence.repositories.ProfileRepository;
 import com.biit.server.security.model.AuthRequest;
 import com.biit.usermanager.client.providers.AuthenticatedUserProvider;
+import com.biit.utils.file.FileReader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +34,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,6 +47,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = {"cadtIndividualProfileServices"})
 public class CadtIndividualProfilesServicesTests extends AbstractTestNGSpringContextTests {
 
+    private static final String DROOLS_FORM_FILE_PATH_1 = "drools/droolsProfile1.json";
+
     private final static String USER_NAME = "user";
     private final static String USER_PASSWORD = "password";
 
@@ -48,6 +56,9 @@ public class CadtIndividualProfilesServicesTests extends AbstractTestNGSpringCon
 
     @Autowired
     private CadtIndividualProfileRepository repository;
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -65,7 +76,7 @@ public class CadtIndividualProfilesServicesTests extends AbstractTestNGSpringCon
 
     private String adminJwtToken;
 
-    private ProfileDTO profile;
+    private Profile profile;
 
 
     private <T> String toJson(T object) throws JsonProcessingException {
@@ -98,8 +109,19 @@ public class CadtIndividualProfilesServicesTests extends AbstractTestNGSpringCon
         repository.save(profile);
     }
 
+
+    private Profile createProfile(String profileName, DroolsSubmittedForm form) {
+        final Profile profile = new Profile();
+        profile.setName(profileName);
+        profile.setEntity(form);
+        profile.populateFields();
+
+        return profileRepository.save(profile);
+    }
+
+
     @BeforeClass
-    public void initIndividualProfiles() {
+    public void initIndividualCadtProfiles() {
         createCadtIndividualProfile(CadtArchetype.VISIONARY, CadtArchetype.STRATEGIST, CadtArchetype.RECEPTIVE, CadtArchetype.INNOVATOR,
                 CadtArchetype.TRADESMAN, CadtArchetype.LEADER, CadtArchetype.BANKER, CadtArchetype.SCIENTIST,
                 CadtCompetence.BUSINESS_MINDED, CadtCompetence.COMMUNICATION_SKILLS, CadtCompetence.DIRECTION, CadtCompetence.FUTURE, CadtCompetence.INITIATIVE,
@@ -132,6 +154,11 @@ public class CadtIndividualProfilesServicesTests extends AbstractTestNGSpringCon
     public void addUser() {
         //Create the admin user
         authenticatedUserProvider.createUser(USER_NAME, USER_NAME, USER_PASSWORD);
+    }
+
+    @BeforeClass
+    public void initIndividualProfiles() throws FileNotFoundException, JsonProcessingException {
+        profile = createProfile(DROOLS_FORM_FILE_PATH_1, DroolsSubmittedForm.getFromJson(FileReader.getResource(DROOLS_FORM_FILE_PATH_1, StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -254,5 +281,29 @@ public class CadtIndividualProfilesServicesTests extends AbstractTestNGSpringCon
         Assert.assertEquals(profiles.length, 3);
     }
 
+    @Test(dependsOnMethods = "setAdminAuthentication")
+    public void findByProfile() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/individual-reports/profiles/" + profile.getId() + "/thresholds/" + 10)
+                        .param("competence", CadtCompetence.BUSINESS_MINDED.getTag())
+                        .param("competence", CadtCompetence.COMMUNICATION_SKILLS.getTag())
+                        .param("competence", CadtCompetence.DIRECTION.getTag())
+                        .param("competence", CadtCompetence.FUTURE.getTag())
+                        .param("competence", CadtCompetence.INITIATIVE.getTag())
+                        .param("competence", CadtCompetence.COOPERATION.getTag())
+                        .param("competence", CadtCompetence.LEADERSHIP.getTag())
+                        .param("competence", CadtCompetence.TENACITY.getTag())
+                        .param("competence", CadtCompetence.MULTICULTURAL_SENSITIVITY.getTag())
+                        .param("competence", CadtCompetence.FLEXIBILITY.getTag())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final CadtIndividualProfileDTO[] profiles =
+                objectMapper.readValue(createResult.getResponse().getContentAsString(), CadtIndividualProfileDTO[].class);
+        Assert.assertEquals(profiles.length, 1);
+    }
 
 }

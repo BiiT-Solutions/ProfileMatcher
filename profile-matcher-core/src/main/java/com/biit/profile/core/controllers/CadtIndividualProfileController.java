@@ -6,10 +6,14 @@ import com.biit.factmanager.client.SearchParameters;
 import com.biit.factmanager.dto.FactDTO;
 import com.biit.profile.core.converters.CadtIndividualProfileConverter;
 import com.biit.profile.core.converters.models.CadtIndividualProfileConverterRequest;
+import com.biit.profile.core.exceptions.ProfileNotFoundException;
 import com.biit.profile.core.models.CadtIndividualProfileDTO;
 import com.biit.profile.core.providers.CadtIndividualProfileProvider;
 import com.biit.profile.core.providers.MetaviewerProvider;
+import com.biit.profile.core.providers.ProfileProvider;
 import com.biit.profile.logger.ProfileLogger;
+import com.biit.profile.persistence.entities.Profile;
+import com.biit.profile.persistence.entities.cadt.CadtCompetence;
 import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
 import com.biit.profile.persistence.repositories.CadtIndividualProfileRepository;
@@ -19,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +38,16 @@ public class CadtIndividualProfileController extends ElementController<CadtIndiv
     private static final String FACT_APPLICATION = "BaseFormDroolsEngine";
 
     private final MetaviewerProvider metaviewerProvider;
+    private final ProfileProvider profileProvider;
     private final FactClient factClient;
     private final ObjectMapper objectMapper;
 
     protected CadtIndividualProfileController(CadtIndividualProfileProvider provider, CadtIndividualProfileConverter converter,
-                                              MetaviewerProvider metaviewerProvider, FactClient factClient, ObjectMapper objectMapper) {
+                                              MetaviewerProvider metaviewerProvider, ProfileProvider profileProvider, FactClient factClient,
+                                              ObjectMapper objectMapper) {
         super(provider, converter);
         this.metaviewerProvider = metaviewerProvider;
+        this.profileProvider = profileProvider;
         this.factClient = factClient;
         this.objectMapper = objectMapper;
     }
@@ -89,10 +97,21 @@ public class CadtIndividualProfileController extends ElementController<CadtIndiv
     }
 
 
-    public List<CadtIndividualProfileDTO> findByCompetencesIn(List<String> competences, int threshold, String searchedBy) {
+    public List<CadtIndividualProfileDTO> findByCompetences(Collection<CadtCompetence> competences, int threshold, String searchedBy) {
+        return findByCompetenceTagsIn(competences.stream().map(CadtCompetence::getTag).toList(), threshold, searchedBy);
+    }
+
+
+    public List<CadtIndividualProfileDTO> findByCompetenceTagsIn(List<String> competences, int threshold, String searchedBy) {
         ProfileLogger.debug(this.getClass(), "User '{}' is searching for profiles with '{}' competences.", searchedBy, competences);
         final List<CadtIndividualProfileDTO> matchingCompetences = convertAll(getProvider().findByCompetencesIn(competences, threshold));
         ProfileLogger.debug(this.getClass(), "Found '{}' profiles.", matchingCompetences.size());
         return matchingCompetences;
+    }
+
+    public List<CadtIndividualProfileDTO> findByProfile(Long profileId, int threshold, String searchedBy) {
+        final Profile profile = profileProvider.findById(profileId)
+                .orElseThrow(() -> new ProfileNotFoundException(this.getClass(), "No profile with id '" + profileId + "' exists!"));
+        return findByCompetences(profile.getSelectedCompetences(), threshold, searchedBy);
     }
 }

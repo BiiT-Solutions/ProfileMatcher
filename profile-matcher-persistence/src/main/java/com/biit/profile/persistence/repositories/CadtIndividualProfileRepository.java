@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -39,7 +40,7 @@ public interface CadtIndividualProfileRepository extends ElementRepository<CadtI
                   (CASE WHEN p.problemAnalysis = true AND 'problem-analysis' IN :competences THEN 1 ELSE 0 END) +
                   (CASE WHEN p.planning = true AND 'planification' IN :competences THEN 1 ELSE 0 END)) >= :threshold
             """)
-    List<CadtIndividualProfile> findByCompetencesIn(List<String> competences, int threshold);
+    List<CadtIndividualProfile> findByCompetencesIn(Collection<String> competences, int threshold);
 
 
 }

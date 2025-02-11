@@ -120,13 +120,24 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a list of profiles by a selection of competences.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/competences/{threshold}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfileDTO> getByCompetences(
             @Parameter(name = "List of matching competences", required = false) @RequestParam(value = "competence", required = false) List<String> competences,
             @Parameter(description = "Minimum competence number to match", required = true) @PathVariable("threshold") int threshold,
             Authentication authentication, HttpServletRequest request) {
-        return getController().findByCompetencesIn(competences, threshold, authentication.getName());
+        return getController().findByCompetenceTagsIn(competences, threshold, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a list of profiles that matches a candidate.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/candidates/{candidateId}/thresholds/{threshold}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ProfileDTO> getByCandidate(
+            @Parameter(description = "Candidate Profile Id", required = true) @PathVariable("candidateId") long candidateId,
+            @Parameter(description = "Minimum competence number to match", required = true) @PathVariable("threshold") int threshold,
+            Authentication authentication, HttpServletRequest request) {
+        return getController().findByCandidate(candidateId, threshold, authentication.getName());
     }
 }

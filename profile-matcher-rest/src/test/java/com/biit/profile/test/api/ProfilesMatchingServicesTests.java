@@ -52,23 +52,6 @@ public class ProfilesMatchingServicesTests extends AbstractTestNGSpringContextTe
     private static final String DROOLS_FORM_FILE_PATH_2 = "drools/droolsProfile2.json";
     private static final String DROOLS_FORM_FILE_PATH_3 = "drools/droolsProfile3.json";
 
-    private static final String DROOLS_FORM_FILE_PATH = "drools/DroolsSubmittedCadtProfileCreator.json";
-    private static final String PROFILE_NAME = "Profile Creation 1";
-    private static final String PROFILE_TYPE = "Job Offer";
-    private static final String PROFILE_TRACKING_CODE = UUID.randomUUID().toString();
-
-    private static final Long USER_ID_1 = 1L;
-    private static final String USER_USERNAME_1 = "username1";
-    private static final String USER_NAME_1 = "User1";
-    private static final String USER_LASTNAME_1 = "Lastname1";
-    private static final String USER_EMAIL_1 = "email1@test.com";
-
-    private static final Long USER_ID_2 = 2L;
-    private static final String USER_USERNAME_2 = "username2";
-    private static final String USER_NAME_2 = "User2";
-    private static final String USER_LASTNAME_2 = "Lastname2";
-    private static final String USER_EMAIL_2 = "email2@test.com";
-
     private final static String USER_NAME = "user";
     private final static String USER_PASSWORD = "password";
 
@@ -92,8 +75,6 @@ public class ProfilesMatchingServicesTests extends AbstractTestNGSpringContextTe
     private MockMvc mockMvc;
 
     private String adminJwtToken;
-
-    private ProfileDTO profile;
 
 
     private <T> String toJson(T object) throws JsonProcessingException {

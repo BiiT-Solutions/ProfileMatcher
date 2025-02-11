@@ -13,6 +13,7 @@ import com.biit.server.providers.ElementProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -111,7 +112,7 @@ public class CadtIndividualProfileProvider extends ElementProvider<CadtIndividua
     }
 
 
-    public List<CadtIndividualProfile> findByCompetencesIn(List<String> competences, int threshold) {
+    public List<CadtIndividualProfile> findByCompetencesIn(Collection<String> competences, int threshold) {
         return getRepository().findByCompetencesIn(competences, threshold);
     }
 

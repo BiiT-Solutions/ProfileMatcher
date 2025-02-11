@@ -1,14 +1,15 @@
 package com.biit.profile.persistence.entities;
 
 import com.biit.database.encryption.StringCryptoConverter;
+import com.biit.drools.form.DroolsSubmittedCategory;
 import com.biit.drools.form.DroolsSubmittedForm;
 import com.biit.drools.form.DroolsSubmittedQuestion;
+import com.biit.form.submitted.implementation.SubmittedObject;
 import com.biit.kafka.config.ObjectMapperFactory;
 import com.biit.profile.logger.ProfileLogger;
+import com.biit.profile.persistence.entities.cadt.CadtArchetype;
 import com.biit.profile.persistence.entities.cadt.CadtCompetence;
-import com.biit.profile.persistence.entities.cadt.CadtQuestion;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
-import com.biit.server.persistence.entities.Element;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -25,15 +26,21 @@ import jakarta.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "profile")
-public class Profile extends Element<Long> {
+public class Profile extends SearchableCompetences<Long> {
     private static final int MAX_JSON_LENGTH = 10 * 1024 * 1024;
+    private static final String CADT_PROFILE_FORM = "CADT_Profile_Creator";
+
+    @Serial
+    private static final long serialVersionUID = 4648629193294794935L;
 
 
     @Id
@@ -145,24 +152,47 @@ public class Profile extends Element<Long> {
         return entity;
     }
 
+
     public List<CadtCompetence> getDesiredCompetences() {
         final DroolsSubmittedForm submittedForm = getEntity();
         if (submittedForm == null) {
             throw new InvalidProfileValueException("No drools form found!");
         }
 
-        final DroolsSubmittedQuestion questionWithCompetences = submittedForm.getSubmittedForm()
-                .getChild(DroolsSubmittedQuestion.class, CadtQuestion.COMPETENCES.getTag());
+        if (!Objects.equals(submittedForm.getTag(), CADT_PROFILE_FORM)) {
+            throw new InvalidProfileValueException("Invalid drools form found! Expected title is '"
+                    + CADT_PROFILE_FORM + "' and current one is '" + submittedForm.getTag() + "'.");
+        }
+
+        final DroolsSubmittedCategory category = submittedForm
+                .getChild(DroolsSubmittedCategory.class, "profile");
         final List<CadtCompetence> competences = new ArrayList<>();
-        for (String answer : questionWithCompetences.getAnswers()) {
-            final CadtCompetence competence = CadtCompetence.fromTag(answer);
-            if (competence == null) {
-                throw new InvalidProfileValueException("Invalid competence '" + answer + "' found!");
+        for (SubmittedObject question : category.getChildren()) {
+            if (question instanceof DroolsSubmittedQuestion) {
+                for (String answer : ((DroolsSubmittedQuestion) question).getAnswers()) {
+                    final CadtArchetype archetype = CadtArchetype.fromTag(answer);
+                    if (archetype == null) {
+                        final CadtCompetence competence = CadtCompetence.fromTag(answer);
+                        if (competence == null) {
+                            ProfileLogger.warning(this.getClass(), "Invalid competence '{}' found!", answer);
+                        } else {
+                            competences.add(competence);
+                        }
+                    } else {
+                        ProfileLogger.debug(this.getClass(), "Obtained archetype '{}'. Ignoring.", archetype);
+                    }
+                }
             }
-            competences.add(competence);
         }
         return competences;
+    }
 
+
+    public void populateFields() {
+        setAllCompetences(false);
+        for (CadtCompetence competence : getDesiredCompetences()) {
+            assignCompetence(competence);
+        }
     }
 
 }

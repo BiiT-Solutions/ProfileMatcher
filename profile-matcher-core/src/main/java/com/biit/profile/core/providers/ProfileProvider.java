@@ -1,11 +1,13 @@
 package com.biit.profile.core.providers;
 
 import com.biit.profile.persistence.entities.Profile;
+import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.profile.persistence.repositories.ProfileRepository;
 import com.biit.server.providers.ElementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,5 +29,9 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
 
     public Set<Profile> findByType(String name) {
         return getRepository().findByType(name);
+    }
+
+    public List<Profile> findByCompetencesIn(List<String> competences, int threshold) {
+        return getRepository().findByCompetencesIn(competences, threshold);
     }
 }

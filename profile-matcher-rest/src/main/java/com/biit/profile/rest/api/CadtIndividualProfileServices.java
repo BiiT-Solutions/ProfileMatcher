@@ -36,7 +36,7 @@ public class CadtIndividualProfileServices extends ElementServices<CadtIndividua
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets an individual profile by a selection of competences.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @Operation(summary = "Gets any individual profile that matches a selection of competences.", security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping(value = {"/competences/{threshold}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CadtIndividualProfileDTO> getByCompetences(
             @Parameter(name = "List of matching competences", required = false) @RequestParam(value = "competence", required = false) List<String> competences,

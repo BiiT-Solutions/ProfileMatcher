@@ -10,6 +10,7 @@ import com.biit.profile.core.models.ProfileDTO;
 import com.biit.profile.core.providers.ProfileCandidateCommentProvider;
 import com.biit.profile.core.providers.ProfileCandidateProvider;
 import com.biit.profile.core.providers.ProfileProvider;
+import com.biit.profile.logger.ProfileLogger;
 import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.entities.ProfileCandidate;
 import com.biit.profile.persistence.repositories.ProfileRepository;
@@ -106,5 +107,12 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         profile.setUpdatedBy(assignedBy);
 
         return convert(getProvider().save(profile));
+    }
+
+    public List<ProfileDTO> findByCompetencesIn(List<String> competences, int threshold, String searchedBy) {
+        ProfileLogger.debug(this.getClass(), "User '{}' is searching for profiles with '{}' competences.", searchedBy, competences);
+        final List<ProfileDTO> matchingCompetences = convertAll(getProvider().findByCompetencesIn(competences, threshold));
+        ProfileLogger.debug(this.getClass(), "Found '{}' profiles.", matchingCompetences.size());
+        return matchingCompetences;
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
@@ -41,7 +42,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a profile by name.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping(value = {"/names/{name}"},  produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {"/names/{name}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO getByName(@Parameter(description = "Name of an existing profile", required = true) @PathVariable("name") String name,
                                 Authentication authentication, HttpServletRequest request) {
         return getController().getByName(name);
@@ -50,7 +51,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a profile by name.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping(value = {"/types/{type}"},  produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {"/types/{type}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfileDTO> getByType(@Parameter(description = "Type of an existing profiles", required = true) @PathVariable("type") String type,
                                       Authentication authentication, HttpServletRequest request) {
         return getController().getByType(type);
@@ -59,7 +60,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a profile by tracking code.", security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping(value = {"/tracking-codes/{trackingCode}"},  produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {"/tracking-codes/{trackingCode}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProfileDTO> getByTrackingCode(@Parameter(description = "Tracking Code of an existing profiles", required = true)
                                               @PathVariable("trackingCode") String trackingCode,
                                               Authentication authentication, HttpServletRequest request) {
@@ -116,5 +117,16 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
             Authentication authentication,
             HttpServletRequest request) {
         return getController().unAssign(id, users, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets a list of profiles by a selection of competences.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping(value = {"/competences/{threshold}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ProfileDTO> getByCompetences(
+            @Parameter(name = "List of matching competences", required = false) @RequestParam(value = "competence", required = false) List<String> competences,
+            @Parameter(description = "Minimum competence number to match", required = true) @PathVariable("threshold") int threshold,
+            Authentication authentication, HttpServletRequest request) {
+        return getController().findByCompetencesIn(competences, threshold, authentication.getName());
     }
 }

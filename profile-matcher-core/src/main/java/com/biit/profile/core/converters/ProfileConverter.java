@@ -1,9 +1,9 @@
 package com.biit.profile.core.converters;
 
-import com.biit.server.controller.converters.ElementConverter;
 import com.biit.profile.core.converters.models.ProfileConverterRequest;
 import com.biit.profile.core.models.ProfileDTO;
 import com.biit.profile.persistence.entities.Profile;
+import com.biit.server.controller.converters.ElementConverter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +25,7 @@ public class ProfileConverter extends ElementConverter<Profile, ProfileDTO, Prof
         }
         final Profile profile = new Profile();
         BeanUtils.copyProperties(to, profile);
+        profile.populateFields();
         return profile;
     }
 }

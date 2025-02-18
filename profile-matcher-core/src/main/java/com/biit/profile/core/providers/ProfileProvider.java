@@ -78,8 +78,9 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
         return getRepository().findByCompetencesIn(competences, threshold);
     }
 
-    private void populateHash(Profile profile) {
-        profile.setCreatedByHash(profile.getCreatedBy());
+    @Override
+    protected void populateHash(Profile profile) {
+        super.populateHash(profile);
         profile.setNameByHash(profile.getName());
         profile.setTypeByHash(profile.getType());
         profile.setTrackingCodeByHash(profile.getTrackingCode());

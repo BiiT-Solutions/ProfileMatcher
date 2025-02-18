@@ -28,6 +28,22 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
         return profile;
     }
 
+    @Override
+    public Profile save(Profile entity) {
+        populateHash(entity);
+        final Profile entityStored = super.save(entity);
+        populateHash(entityStored);
+        return entityStored;
+    }
+
+    @Override
+    public List<Profile> saveAll(Collection<Profile> entities) {
+        entities.forEach(this::populateHash);
+        final List<Profile> storedEntities = super.saveAll(entities);
+        storedEntities.forEach(this::populateHash);
+        return storedEntities;
+    }
+
     public Optional<Profile> findByName(String name) {
         final Optional<Profile> profile;
         if (getEncryptionKey() != null && !getEncryptionKey().isBlank()) {
@@ -35,7 +51,6 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
         } else {
             profile = getRepository().findByName(name);
         }
-        profile.ifPresent(this::populateHash);
         return profile;
     }
 
@@ -46,7 +61,6 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
         } else {
             profiles = getRepository().findByTrackingCode(name);
         }
-        profiles.forEach(this::populateHash);
         return profiles;
     }
 
@@ -57,7 +71,6 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
         } else {
             profiles = getRepository().findByType(name);
         }
-        profiles.forEach(this::populateHash);
         return profiles;
     }
 
@@ -66,6 +79,7 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
     }
 
     private void populateHash(Profile profile) {
+        profile.setCreatedByHash(profile.getCreatedBy());
         profile.setNameByHash(profile.getName());
         profile.setTypeByHash(profile.getType());
         profile.setTrackingCodeByHash(profile.getTrackingCode());

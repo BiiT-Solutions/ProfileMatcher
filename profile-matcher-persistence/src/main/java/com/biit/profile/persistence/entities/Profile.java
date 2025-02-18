@@ -1,5 +1,6 @@
 package com.biit.profile.persistence.entities;
 
+import com.biit.database.encryption.SHA512HashGenerator;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.drools.form.DroolsSubmittedCategory;
 import com.biit.drools.form.DroolsSubmittedForm;
@@ -53,6 +54,10 @@ public class Profile extends SearchableCompetences<Long> {
     private String name = "";
 
 
+    @Column(name = "name_by_hash", nullable = false, unique = true)
+    @Convert(converter = SHA512HashGenerator.class)
+    private String nameByHash = "";
+
     @Lob
     @Column(name = "description")
     @Convert(converter = StringCryptoConverter.class)
@@ -63,10 +68,18 @@ public class Profile extends SearchableCompetences<Long> {
     @Convert(converter = StringCryptoConverter.class)
     private String trackingCode;
 
+    @Column(name = "tracking_code_by_hash")
+    @Convert(converter = SHA512HashGenerator.class)
+    private String trackingCodeByHash;
+
 
     @Column(name = "type")
     @Convert(converter = StringCryptoConverter.class)
     private String type;
+
+    @Column(name = "type_by_hash")
+    @Convert(converter = SHA512HashGenerator.class)
+    private String typeByHash;
 
     @Transient
     private transient DroolsSubmittedForm entity;
@@ -82,6 +95,7 @@ public class Profile extends SearchableCompetences<Long> {
 
     public void setName(String name) {
         this.name = name;
+        this.nameByHash = name;
     }
 
     public Long getId() {
@@ -106,6 +120,7 @@ public class Profile extends SearchableCompetences<Long> {
 
     public void setTrackingCode(String trackingCode) {
         this.trackingCode = trackingCode;
+        this.trackingCodeByHash = trackingCode;
     }
 
     public String getType() {
@@ -114,6 +129,7 @@ public class Profile extends SearchableCompetences<Long> {
 
     public void setType(String type) {
         this.type = type;
+        this.typeByHash = type;
     }
 
     public void setContent(String content) {
@@ -126,6 +142,29 @@ public class Profile extends SearchableCompetences<Long> {
         return content == null ? "" : content;
     }
 
+    public String getNameByHash() {
+        return nameByHash;
+    }
+
+    public void setNameByHash(String nameByHash) {
+        this.nameByHash = nameByHash;
+    }
+
+    public String getTrackingCodeByHash() {
+        return trackingCodeByHash;
+    }
+
+    public void setTrackingCodeByHash(String trackingCodeByHash) {
+        this.trackingCodeByHash = trackingCodeByHash;
+    }
+
+    public String getTypeByHash() {
+        return typeByHash;
+    }
+
+    public void setTypeByHash(String typeByHash) {
+        this.typeByHash = typeByHash;
+    }
 
     @JsonIgnore
     public void setEntity(DroolsSubmittedForm entity) {

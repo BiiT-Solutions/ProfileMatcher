@@ -17,9 +17,15 @@ public interface ProfileRepository extends ElementRepository<Profile, Long> {
 
     Optional<Profile> findByName(String name);
 
+    Optional<Profile> findByNameByHash(String name);
+
     Set<Profile> findByTrackingCode(String trackingCode);
 
+    Set<Profile> findByTrackingCodeByHash(String trackingCode);
+
     Set<Profile> findByType(String type);
+
+    Set<Profile> findByTypeByHash(String type);
 
     @Query("""
                SELECT p FROM Profile p WHERE

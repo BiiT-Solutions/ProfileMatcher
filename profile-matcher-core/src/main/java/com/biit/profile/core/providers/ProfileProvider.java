@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.biit.database.encryption.KeyProperty.getEncryptionKey;
+
 @Service
 public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepository> {
 
@@ -19,19 +21,53 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
         super(repository);
     }
 
+    @Override
+    public Optional<Profile> findById(Long id) {
+        final Optional<Profile> profile = super.findById(id);
+        profile.ifPresent(this::populateHash);
+        return profile;
+    }
+
     public Optional<Profile> findByName(String name) {
-        return getRepository().findByName(name);
+        final Optional<Profile> profile;
+        if (getEncryptionKey() != null && !getEncryptionKey().isBlank()) {
+            profile = getRepository().findByNameByHash(name);
+        } else {
+            profile = getRepository().findByName(name);
+        }
+        profile.ifPresent(this::populateHash);
+        return profile;
     }
 
     public Set<Profile> findByTrackingCode(String name) {
-        return getRepository().findByTrackingCode(name);
+        final Set<Profile> profiles;
+        if (getEncryptionKey() != null && !getEncryptionKey().isBlank()) {
+            profiles = getRepository().findByTrackingCodeByHash(name);
+        } else {
+            profiles = getRepository().findByTrackingCode(name);
+        }
+        profiles.forEach(this::populateHash);
+        return profiles;
     }
 
     public Set<Profile> findByType(String name) {
-        return getRepository().findByType(name);
+        final Set<Profile> profiles;
+        if (getEncryptionKey() != null && !getEncryptionKey().isBlank()) {
+            profiles = getRepository().findByTypeByHash(name);
+        } else {
+            profiles = getRepository().findByType(name);
+        }
+        profiles.forEach(this::populateHash);
+        return profiles;
     }
 
     public List<Profile> findByCompetencesIn(Collection<String> competences, int threshold) {
         return getRepository().findByCompetencesIn(competences, threshold);
+    }
+
+    private void populateHash(Profile profile) {
+        profile.setNameByHash(profile.getName());
+        profile.setTypeByHash(profile.getType());
+        profile.setTrackingCodeByHash(profile.getTrackingCode());
     }
 }

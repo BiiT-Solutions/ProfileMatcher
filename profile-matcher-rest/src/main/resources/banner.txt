@@ -8,7 +8,7 @@ ${AnsiColor.BRIGHT_YELLOW}${AnsiStyle.BOLD}
   \_|  |_|  \___/|_| |_|_|\___| \_|  |_/\__,_|\__\___|_| |_|\___|_|
 
 ${AnsiColor.CYAN}${AnsiStyle.BOLD}
-::  Profile Matcher          ::  (v${application.version})
+::  Profile Matcher      ::  (v${application.version})
 ::  Java                 ::  (v${java.version})
 ::  Spring Boot          ::  (v${spring-boot.version})
 ${AnsiStyle.NORMAL}

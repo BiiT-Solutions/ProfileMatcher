@@ -4,7 +4,7 @@
     <artifactId>profile-matcher</artifactId>
     <name>Profile Matcher</name>
     <groupId>com.biit.profile</groupId>
-    <version>1.188-SNAPSHOT</version>
+    <version>1.189-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>

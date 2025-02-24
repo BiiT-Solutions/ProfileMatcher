@@ -54,7 +54,7 @@ public class Profile extends SearchableCompetences<Long> {
     private String name = "";
 
 
-    @Column(name = "name_by_hash", nullable = false, unique = true)
+    @Column(name = "name_by_hash")
     @Convert(converter = SHA512HashGenerator.class)
     private String nameByHash = "";
 

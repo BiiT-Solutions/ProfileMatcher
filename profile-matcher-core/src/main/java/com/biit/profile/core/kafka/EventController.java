@@ -1,12 +1,12 @@
 package com.biit.profile.core.kafka;
 
-import com.biit.drools.form.DroolsSubmittedForm;
 import com.biit.kafka.events.Event;
 import com.biit.kafka.events.EventCustomProperties;
 import com.biit.kafka.logger.EventsLogger;
-import com.biit.profile.core.controllers.CadtIndividualProfileController;
+import com.biit.profile.core.handlers.ProfileCadtHandler;
+import com.biit.profile.core.handlers.UserCadtHandler;
 import com.biit.profile.core.providers.CadtIndividualProfileProvider;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.biit.profile.persistence.entities.Profile;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Controller;
 
@@ -25,10 +25,12 @@ public class EventController {
 
     public static final String ALLOWED_FACT_TYPE = "DroolsResultForm";
 
-    private final CadtIndividualProfileController cadtIndividualProfileController;
+    private final UserCadtHandler userCadtHandler;
+    private final ProfileCadtHandler profileCadtHandler;
 
-    public EventController(CadtIndividualProfileController cadtIndividualProfileController) {
-        this.cadtIndividualProfileController = cadtIndividualProfileController;
+    public EventController(UserCadtHandler userCadtHandler, ProfileCadtHandler profileCadtHandler) {
+        this.userCadtHandler = userCadtHandler;
+        this.profileCadtHandler = profileCadtHandler;
     }
 
 
@@ -43,32 +45,19 @@ public class EventController {
                     EventsLogger.debug(this.getClass(), "Event is not a form. Ignored.");
                     return;
                 }
-                if (!Objects.equals(event.getTag(), CadtIndividualProfileProvider.FORM_NAME)) {
-                    EventsLogger.debug(this.getClass(), "Event is a different form. Ignored");
-                    return;
-                }
             }
 
-            final DroolsSubmittedForm droolsForm = getDroolsForm(event);
+            //Is it a cadt from a user?
+            userCadtHandler.processEvent(event, CadtIndividualProfileProvider.FORM_NAME);
 
-            final String createdBy = event.getCustomProperties().get(EventCustomProperties.ISSUER.getTag()) != null
-                    ? event.getCustomProperties().get(EventCustomProperties.ISSUER.getTag())
-                    : event.getCreatedBy();
+            //Is it a cadt from a vacancy?
+            profileCadtHandler.processEvent(event, Profile.CADT_PROFILE_FORM);
 
-            EventsLogger.info(this.getClass(), "Received new drools form from '{}'", createdBy);
 
-            cadtIndividualProfileController.newFormReceived(droolsForm, event.getSessionId());
-
-        } catch (JsonProcessingException e) {
-            EventsLogger.severe(this.getClass(), "Event cannot be parsed!!\n" + event);
-            EventsLogger.errorMessage(this.getClass(), e);
         } catch (Exception e) {
             EventsLogger.severe(this.getClass(), "Invalid event received!!\n" + event);
             EventsLogger.errorMessage(this.getClass(), e);
         }
     }
 
-    private DroolsSubmittedForm getDroolsForm(Event event) throws JsonProcessingException {
-        return event.getEntity(DroolsSubmittedForm.class);
-    }
 }

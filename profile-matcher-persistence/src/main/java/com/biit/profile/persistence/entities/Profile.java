@@ -24,6 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -31,27 +32,31 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "profile")
+@Table(name = "profile", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization"})})
 public class Profile extends SearchableCompetences<Long> {
     private static final int MAX_JSON_LENGTH = 10 * 1024 * 1024;
-    private static final String CADT_PROFILE_FORM = "CADT_Profile_Creator";
+    public static final String CADT_PROFILE_FORM = "CADT_Profile_Creator";
 
     @Serial
     private static final long serialVersionUID = 4648629193294794935L;
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String name = "";
+
+
+    @Column(name = "organization")
+    @Convert(converter = StringCryptoConverter.class)
+    private String organization = null;
 
 
     @Column(name = "name_by_hash")
@@ -87,6 +92,15 @@ public class Profile extends SearchableCompetences<Long> {
     @Column(name = "content", length = MAX_JSON_LENGTH)
     @Convert(converter = StringCryptoConverter.class)
     private String content;
+
+    @Column(name = "drools_id")
+    private String droolsId;
+
+    @Column(name = "form_version", nullable = false)
+    private int formVersion;
+
+    @Column(name = "session")
+    private UUID session;
 
 
     public String getName() {
@@ -166,6 +180,38 @@ public class Profile extends SearchableCompetences<Long> {
         this.typeByHash = typeByHash;
     }
 
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    public String getDroolsId() {
+        return droolsId;
+    }
+
+    public void setDroolsId(String droolsId) {
+        this.droolsId = droolsId;
+    }
+
+    public int getFormVersion() {
+        return formVersion;
+    }
+
+    public void setFormVersion(int formVersion) {
+        this.formVersion = formVersion;
+    }
+
+    public UUID getSession() {
+        return session;
+    }
+
+    public void setSession(UUID session) {
+        this.session = session;
+    }
+
     @JsonIgnore
     public void setEntity(DroolsSubmittedForm entity) {
         try {
@@ -226,12 +272,16 @@ public class Profile extends SearchableCompetences<Long> {
         return competences;
     }
 
-
     public void populateFields() {
         setAllCompetences(false);
         for (CadtCompetence competence : getDesiredCompetences()) {
             assignCompetence(competence);
         }
+    }
+
+    @Override
+    public void validate() throws InvalidProfileValueException {
+
     }
 
 }

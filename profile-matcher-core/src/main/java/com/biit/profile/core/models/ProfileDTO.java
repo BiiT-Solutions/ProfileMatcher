@@ -4,7 +4,12 @@ import com.biit.server.controllers.models.ElementDTO;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serial;
+
 public class ProfileDTO extends ElementDTO<Long> {
+
+    @Serial
+    private static final long serialVersionUID = 1549251750715528563L;
 
     private Long id;
 
@@ -15,6 +20,8 @@ public class ProfileDTO extends ElementDTO<Long> {
     private String trackingCode;
 
     private String type;
+
+    private String organization = null;
 
     @JsonSerialize(using = JsonValueSerializer.class)
     @JsonDeserialize(using = JsonValueDeserializer.class)
@@ -83,5 +90,13 @@ public class ProfileDTO extends ElementDTO<Long> {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 }

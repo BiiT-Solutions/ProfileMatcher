@@ -1,5 +1,7 @@
 package com.biit.profile.core.providers;
 
+import com.biit.drools.form.DroolsSubmittedForm;
+import com.biit.profile.core.exceptions.InvalidFormException;
 import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.repositories.ProfileRepository;
 import com.biit.server.providers.ElementProvider;
@@ -7,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.biit.database.encryption.KeyProperty.getEncryptionKey;
 
@@ -84,5 +89,33 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
         profile.setNameByHash(profile.getName());
         profile.setTypeByHash(profile.getType());
         profile.setTrackingCodeByHash(profile.getTrackingCode());
+    }
+
+
+    public Profile create(DroolsSubmittedForm droolsSubmittedForm, UUID session) {
+        if (!Objects.equals(droolsSubmittedForm.getName(), Profile.CADT_PROFILE_FORM)) {
+            throw new InvalidFormException("Form '" + droolsSubmittedForm.getName() + "' is not the correct form.");
+        }
+        final Profile vacancyProfile = new Profile();
+        vacancyProfile.setCreatedBy(droolsSubmittedForm.getSubmittedBy());
+        vacancyProfile.setCreatedAt(droolsSubmittedForm.getSubmittedAt());
+        vacancyProfile.setOrganization(droolsSubmittedForm.getOrganization());
+        vacancyProfile.setContent(droolsSubmittedForm.toJson());
+        vacancyProfile.setDroolsId(droolsSubmittedForm.getId());
+        vacancyProfile.setFormVersion(droolsSubmittedForm.getVersion());
+        vacancyProfile.setSession(session);
+
+        final String formName;
+        final Iterator<String> iterator = droolsSubmittedForm.getQuestion("metadata", "name").getAnswers().iterator();
+        if (iterator.hasNext()) {
+            formName = iterator.next();
+        } else {
+            formName = UUID.randomUUID().toString();
+        }
+
+        vacancyProfile.setName(formName);
+        vacancyProfile.populateFields();
+
+        return vacancyProfile;
     }
 }

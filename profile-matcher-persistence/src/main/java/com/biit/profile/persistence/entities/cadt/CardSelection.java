@@ -4,7 +4,8 @@ public enum CardSelection {
     FIRST,
     SECOND,
     SHADOWED,
-    DISCARDED;
+    DISCARDED,
+    SELECTED;
 
     public boolean isSelected() {
         return this == CardSelection.FIRST || this == CardSelection.SECOND;

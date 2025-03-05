@@ -2,6 +2,7 @@ package com.biit.profile.persistence.entities;
 
 
 import com.biit.profile.persistence.entities.cadt.CadtCompetence;
+import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
 import com.biit.server.persistence.entities.Element;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -420,5 +421,7 @@ public abstract class SearchableCompetences<KEY> extends Element<KEY> {
         }
         return competences;
     }
+
+    public abstract void validate() throws InvalidProfileValueException;
 
 }

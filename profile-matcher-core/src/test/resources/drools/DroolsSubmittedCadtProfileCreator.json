@@ -13,7 +13,7 @@
           "text": "receptive",
           "children": [],
           "answers": [
-            "receptive",
+            "receptive-archetype",
             "interpersonal-sensitivity",
             "multicultural-sensitivity"
           ]
@@ -24,7 +24,7 @@
           "text": "innovator",
           "children": [],
           "answers": [
-            "innovator",
+            "innovator-archetype",
             "cooperation",
             "innovation"
           ]
@@ -35,7 +35,7 @@
           "text": "visionary",
           "children": [],
           "answers": [
-            "visionary",
+            "visionary-archetype",
             "persuasiveness",
             "future"
           ]
@@ -46,7 +46,7 @@
           "text": "strategist",
           "children": [],
           "answers": [
-            "strategist",
+            "strategist-archetype",
             "decisiveness",
             "judgement"
           ]
@@ -97,7 +97,7 @@
           "text": "banker",
           "children": [],
           "answers": [
-            "banker",
+            "banker-archetype",
             "business-minded",
             "tenacity"
           ]
@@ -108,7 +108,7 @@
           "text": "tradesman",
           "children": [],
           "answers": [
-            "tradesman",
+            "tradesman-archetype",
             "communication-skills",
             "client-oriented"
           ]
@@ -119,7 +119,7 @@
           "text": "leader",
           "children": [],
           "answers": [
-            "leader",
+            "leader-archetype",
             "leadership",
             "independence"
           ]
@@ -130,7 +130,7 @@
           "text": "scientist",
           "children": [],
           "answers": [
-            "scientist",
+            "scientist-archetype",
             "problem-analysis",
             "planification"
           ]

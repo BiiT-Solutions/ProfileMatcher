@@ -1,6 +1,7 @@
 package com.biit.profile.core.controllers;
 
 
+import com.biit.drools.form.DroolsSubmittedForm;
 import com.biit.kafka.controllers.KafkaElementController;
 import com.biit.profile.core.converters.ProfileConverter;
 import com.biit.profile.core.converters.models.ProfileConverterRequest;
@@ -9,6 +10,7 @@ import com.biit.profile.core.exceptions.ProfileNotFoundException;
 import com.biit.profile.core.kafka.ProfileEventSender;
 import com.biit.profile.core.models.ProfileDTO;
 import com.biit.profile.core.providers.CadtIndividualProfileProvider;
+import com.biit.profile.core.providers.ICadtController;
 import com.biit.profile.core.providers.ProfileCandidateCommentProvider;
 import com.biit.profile.core.providers.ProfileCandidateProvider;
 import com.biit.profile.core.providers.ProfileProvider;
@@ -17,6 +19,7 @@ import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.entities.ProfileCandidate;
 import com.biit.profile.persistence.entities.cadt.CadtCompetence;
 import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
+import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
 import com.biit.profile.persistence.repositories.ProfileRepository;
 import com.biit.usermanager.dto.BasicUserDTO;
 import com.biit.usermanager.dto.UserDTO;
@@ -32,7 +35,7 @@ import java.util.stream.Collectors;
 
 @Controller
 public class ProfileController extends KafkaElementController<Profile, Long, ProfileDTO, ProfileRepository,
-        ProfileProvider, ProfileConverterRequest, ProfileConverter> {
+        ProfileProvider, ProfileConverterRequest, ProfileConverter> implements ICadtController {
 
     private final ProfileCandidateProvider profileCandidateProvider;
     private final ProfileCandidateCommentProvider profileCandidateCommentProvider;
@@ -133,5 +136,16 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         final CadtIndividualProfile cadtIndividualProfile = cadtIndividualProfileProvider.findById(candidateProfileId)
                 .orElseThrow(() -> new CandidateNotFoundException(this.getClass(), "No candidates with id '" + candidateProfileId + "' found!"));
         return findByCompetencesIn(cadtIndividualProfile.getSelectedCompetences(), threshold, searchedBy);
+    }
+
+    @Override
+    public synchronized void newProfileReceived(DroolsSubmittedForm droolsSubmittedForm, UUID session) {
+        final Profile profile = getProvider().create(droolsSubmittedForm, session);
+        try {
+            profile.validate();
+            getProvider().save(profile);
+        } catch (InvalidProfileValueException e) {
+            ProfileLogger.errorMessage(this.getClass(), e);
+        }
     }
 }

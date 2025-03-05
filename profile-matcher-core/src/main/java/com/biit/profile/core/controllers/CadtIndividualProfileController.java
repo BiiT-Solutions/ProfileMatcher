@@ -9,6 +9,7 @@ import com.biit.profile.core.converters.models.CadtIndividualProfileConverterReq
 import com.biit.profile.core.exceptions.ProfileNotFoundException;
 import com.biit.profile.core.models.CadtIndividualProfileDTO;
 import com.biit.profile.core.providers.CadtIndividualProfileProvider;
+import com.biit.profile.core.providers.ICadtController;
 import com.biit.profile.core.providers.MetaviewerProvider;
 import com.biit.profile.core.providers.ProfileProvider;
 import com.biit.profile.logger.ProfileLogger;
@@ -31,7 +32,8 @@ import java.util.UUID;
 
 @Controller
 public class CadtIndividualProfileController extends ElementController<CadtIndividualProfile, Long, CadtIndividualProfileDTO,
-        CadtIndividualProfileRepository, CadtIndividualProfileProvider, CadtIndividualProfileConverterRequest, CadtIndividualProfileConverter> {
+        CadtIndividualProfileRepository, CadtIndividualProfileProvider, CadtIndividualProfileConverterRequest, CadtIndividualProfileConverter>
+        implements ICadtController {
 
     private static final String FACT_SUBJECT = "CREATED";
     private static final String FACT_TYPE = "DroolsResultForm";
@@ -85,7 +87,8 @@ public class CadtIndividualProfileController extends ElementController<CadtIndiv
     }
 
 
-    public synchronized void newFormReceived(DroolsSubmittedForm droolsSubmittedForm, UUID session) {
+    @Override
+    public synchronized void newProfileReceived(DroolsSubmittedForm droolsSubmittedForm, UUID session) {
         final CadtIndividualProfile cadtIndividualProfile = getProvider().create(droolsSubmittedForm, session);
         try {
             cadtIndividualProfile.validate();

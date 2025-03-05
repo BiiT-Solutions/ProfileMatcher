@@ -219,7 +219,7 @@ public class CadtIndividualProfile extends SearchableCompetences<Long> {
         }
     }
 
-
+    @Override
     public void validate() throws InvalidProfileValueException {
         if (getReceptive() == null) {
             throw new InvalidProfileValueException("Archetypes 'receptive' is null.");
@@ -260,6 +260,5 @@ public class CadtIndividualProfile extends SearchableCompetences<Long> {
         if (getSelectedCompetences().size() != SELECTED_COMPETENCES) {
             throw new InvalidProfileValueException("Competences must be " + SELECTED_COMPETENCES);
         }
-
     }
 }

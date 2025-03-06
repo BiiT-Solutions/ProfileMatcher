@@ -11,6 +11,7 @@ import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.utils.file.FileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -31,9 +32,11 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = "cadt")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Listeners(TestListener.class)
 public class CadtValueTest extends AbstractTestNGSpringContextTests {
     protected static final String OUTPUT_FOLDER = System.getProperty("java.io.tmpdir") + File.separator + "MetaViewer";
+    private static final String DROOLS_FORM_FILE_PATH = "drools/CADT_Score_2.json";
 
     @Autowired
     private CadtIndividualProfileController cadtIndividualProfileController;
@@ -43,8 +46,6 @@ public class CadtValueTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private CadtIndividualProfileProvider cadtIndividualProfileProvider;
-
-    private static final String DROOLS_FORM_FILE_PATH = "drools/CADT_Score_2.json";
 
     protected boolean deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();

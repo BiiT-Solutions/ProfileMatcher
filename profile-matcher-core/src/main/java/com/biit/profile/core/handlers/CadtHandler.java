@@ -30,6 +30,7 @@ public abstract class CadtHandler {
             return;
         }
 
+        EventsLogger.info(this.getClass(), "Processing profile from event.");
         try {
             final DroolsSubmittedForm droolsForm = getDroolsForm(event);
 

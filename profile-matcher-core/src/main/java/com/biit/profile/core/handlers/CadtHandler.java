@@ -43,6 +43,7 @@ public abstract class CadtHandler {
             EventsLogger.info(this.getClass(), "Received new drools form from '{}'", createdBy);
             droolsForm.setSubmittedAt(LocalDateTime.now());
             droolsForm.setSubmittedBy(createdBy);
+            droolsForm.setText(droolsForm.getTag());
 
             controller.newProfileReceived(droolsForm, event.getSessionId());
         } catch (JsonProcessingException e) {

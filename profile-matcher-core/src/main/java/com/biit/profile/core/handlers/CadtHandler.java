@@ -7,6 +7,8 @@ import com.biit.kafka.logger.EventsLogger;
 import com.biit.profile.core.providers.ICadtController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class CadtHandler {
@@ -39,6 +41,8 @@ public abstract class CadtHandler {
                     : event.getCreatedBy();
 
             EventsLogger.info(this.getClass(), "Received new drools form from '{}'", createdBy);
+            droolsForm.setSubmittedAt(LocalDateTime.now());
+            droolsForm.setSubmittedBy(createdBy);
 
             controller.newProfileReceived(droolsForm, event.getSessionId());
         } catch (JsonProcessingException e) {

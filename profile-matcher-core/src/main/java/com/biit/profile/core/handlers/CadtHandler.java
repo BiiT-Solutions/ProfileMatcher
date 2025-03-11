@@ -7,7 +7,6 @@ import com.biit.kafka.logger.EventsLogger;
 import com.biit.profile.core.providers.ICadtController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 

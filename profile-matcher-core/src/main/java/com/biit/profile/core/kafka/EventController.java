@@ -30,7 +30,8 @@ public class EventController {
     private final UserCadtHandler userCadtHandler;
     private final ProfileCadtHandler profileCadtHandler;
 
-    public EventController(@Autowired(required = false) EventConsumerListener eventListener, UserCadtHandler userCadtHandler, ProfileCadtHandler profileCadtHandler) {
+    public EventController(@Autowired(required = false) EventConsumerListener eventListener, UserCadtHandler userCadtHandler,
+                           ProfileCadtHandler profileCadtHandler) {
         this.userCadtHandler = userCadtHandler;
         this.profileCadtHandler = profileCadtHandler;
 

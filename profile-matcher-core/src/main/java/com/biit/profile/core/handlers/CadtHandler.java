@@ -45,9 +45,6 @@ public abstract class CadtHandler {
             droolsForm.setText(droolsForm.getTag());
 
             controller.newProfileReceived(droolsForm, event.getSessionId());
-        } catch (JsonProcessingException e) {
-            EventsLogger.severe(this.getClass(), "Event cannot be parsed!!\n" + event);
-            EventsLogger.errorMessage(this.getClass(), e);
         } catch (Exception e) {
             EventsLogger.severe(this.getClass(), "Invalid event received!!\n" + event);
             EventsLogger.errorMessage(this.getClass(), e);

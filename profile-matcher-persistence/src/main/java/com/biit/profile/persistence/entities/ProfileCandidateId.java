@@ -9,7 +9,6 @@ import java.util.UUID;
 
 @Embeddable
 public class ProfileCandidateId implements Serializable {
-    private static final int HASH_CODE = 31;
 
     @Column(name = "profile_id", nullable = false)
     private Long profileId;

@@ -12,13 +12,13 @@ public class FacetSerializer extends JsonSerializer<Facet<?>> {
     @Override
     public void serialize(Facet<?> value, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
         jsonGenerator.writeStartObject();
-        if (jsonGenerator instanceof ToXmlGenerator) {
-            ((ToXmlGenerator) jsonGenerator).setNextIsAttribute(true);
+        if (jsonGenerator instanceof ToXmlGenerator toXmlGenerator) {
+            toXmlGenerator.setNextIsAttribute(true);
         }
         jsonGenerator.writeFieldName("Name");
         jsonGenerator.writeString(value.getName());
-        if (jsonGenerator instanceof ToXmlGenerator) {
-            ((ToXmlGenerator) jsonGenerator).setNextIsAttribute(false);
+        if (jsonGenerator instanceof ToXmlGenerator toXmlGenerator) {
+            toXmlGenerator.setNextIsAttribute(false);
             jsonGenerator.writeObjectField(value.getType().getMetaViewerDefinition(), value.getType());
         } else {
             jsonGenerator.writeObjectField("Type", value.getType());

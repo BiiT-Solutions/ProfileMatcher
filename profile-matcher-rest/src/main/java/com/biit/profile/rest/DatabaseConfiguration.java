@@ -1,15 +1,14 @@
 package com.biit.profile.rest;
 
 import jakarta.persistence.EntityManagerFactory;
-import org.springframework.core.env.Environment;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -24,8 +23,11 @@ import java.util.HashMap;
 public class DatabaseConfiguration {
     public static final String PACKAGE = "com.biit.profile.persistence";
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+
+    public DatabaseConfiguration(Environment environment) {
+        this.environment = environment;
+    }
 
     @Bean
     @Primary
@@ -37,7 +39,7 @@ public class DatabaseConfiguration {
     @Bean
     @Primary
     public LocalContainerEntityManagerFactoryBean profileMatcherFactory(EntityManagerFactoryBuilder builder,
-                                                                          @Qualifier("profileMatcherDataSource") DataSource dataSource) {
+                                                                        @Qualifier("profileMatcherDataSource") DataSource dataSource) {
         final HashMap<String, Object> properties = new HashMap<>();
         properties.put("hibernate.hbm2ddl.auto", environment.getProperty("spring.profile.datasource.hibernate.ddl-auto"));
         return builder.dataSource(dataSource).properties(properties).packages(PACKAGE).build();
@@ -46,7 +48,7 @@ public class DatabaseConfiguration {
     @Bean
     @Primary
     public PlatformTransactionManager profileMatcherTransactionManager(
-            @Qualifier ("profileMatcherFactory") EntityManagerFactory profileMatcherFactory) {
+            @Qualifier("profileMatcherFactory") EntityManagerFactory profileMatcherFactory) {
         return new JpaTransactionManager(profileMatcherFactory);
     }
 }

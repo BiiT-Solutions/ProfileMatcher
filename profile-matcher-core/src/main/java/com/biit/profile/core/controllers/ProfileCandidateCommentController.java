@@ -57,8 +57,9 @@ public class ProfileCandidateCommentController extends ElementController<Profile
         getProvider().deleteByIdProfileIdAndIdUserUid(profileId, userUid);
 
         //Checks that exist the candidate
-        profileCandidateProvider.findByProfileIdAndUserUid(profileId, userUid).orElseThrow(() ->
-                new CandidateNotFoundException(this.getClass(), "No candidate '" + userUid + "' found for profile '" + profileId + "'."));
+        if (profileCandidateProvider.findByProfileIdAndUserUid(profileId, userUid).isEmpty()) {
+            throw new CandidateNotFoundException(this.getClass(), "No candidate '" + userUid + "' found for profile '" + profileId + "'.");
+        }
 
         return getProvider().save(new ProfileCandidateComment(profileId, userUid, comment));
     }

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -64,7 +64,7 @@ public class CadtIndividualProfileController extends ElementController<CadtIndiv
      * Convert facts to database entities.
      */
     public void updateFromFactManager() {
-        final Map<SearchParameters, Object> filter = new HashMap<>();
+        final Map<SearchParameters, Object> filter = new EnumMap<>(SearchParameters.class);
         filter.put(SearchParameters.ELEMENT_NAME, CadtIndividualProfileProvider.FORM_NAME);
         filter.put(SearchParameters.FACT_TYPE, FACT_TYPE);
         filter.put(SearchParameters.SUBJECT, FACT_SUBJECT);

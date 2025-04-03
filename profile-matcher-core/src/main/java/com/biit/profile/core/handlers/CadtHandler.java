@@ -15,12 +15,12 @@ public abstract class CadtHandler {
     private final ICadtController controller;
 
 
-    public CadtHandler(ICadtController controller) {
+    protected CadtHandler(ICadtController controller) {
         this.controller = controller;
     }
 
 
-    protected DroolsSubmittedForm getDroolsForm(Event event) throws JsonProcessingException {
+    protected DroolsSubmittedForm getDroolsForm(Event event) {
         return event.getEntity(DroolsSubmittedForm.class);
     }
 

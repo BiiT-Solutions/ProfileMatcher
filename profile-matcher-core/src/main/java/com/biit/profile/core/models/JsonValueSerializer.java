@@ -14,7 +14,6 @@ public class JsonValueSerializer extends StdSerializer<String> {
 
     @Override
     public void serialize(String value, JsonGenerator jsonGenerator, SerializerProvider provider) throws IOException {
-        //jsonGenerator.writeString("{" + value + "}");
         jsonGenerator.writeString(value);
     }
 }

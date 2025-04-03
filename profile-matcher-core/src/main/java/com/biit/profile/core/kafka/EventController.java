@@ -49,11 +49,9 @@ public class EventController {
                         TimeZone.getDefault().toZoneId()));
 
         try {
-            if (event.getCustomProperties() != null) {
-                if (!Objects.equals(event.getCustomProperty(EventCustomProperties.FACT_TYPE), ALLOWED_FACT_TYPE)) {
-                    EventsLogger.debug(this.getClass(), "Event is not a form. Ignored.");
-                    return;
-                }
+            if (event.getCustomProperties() != null && !Objects.equals(event.getCustomProperty(EventCustomProperties.FACT_TYPE), ALLOWED_FACT_TYPE)) {
+                EventsLogger.debug(this.getClass(), "Event is not a form. Ignored.");
+                return;
             }
 
             if (Objects.equals(event.getSubject(), EventSubject.CREATED.name())) {

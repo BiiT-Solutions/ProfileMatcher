@@ -1,6 +1,5 @@
 package com.biit.profile.rest.exceptions;
 
-import com.biit.factmanager.logger.FactManagerLogger;
 import com.biit.kafka.exceptions.InvalidEventException;
 import com.biit.profile.core.exceptions.CandidateNotFoundException;
 import com.biit.profile.core.exceptions.CommentTooLongException;

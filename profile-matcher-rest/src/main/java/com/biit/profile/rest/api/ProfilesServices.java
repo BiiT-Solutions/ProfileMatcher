@@ -81,7 +81,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, securityService.adminPrivilege)")
     @Operation(summary = "Adds candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO addCandidates(
@@ -93,7 +93,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
         return getController().assign(id, users, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Adds candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/{id}/users/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO addCandidatesByUUID(
@@ -107,7 +107,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Removes candidates from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/{id}/users/remove", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO removeCandidates(

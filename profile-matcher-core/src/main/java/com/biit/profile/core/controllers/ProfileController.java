@@ -101,12 +101,16 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
 
 
     public ProfileDTO unAssign(Long profileId, Collection<UserDTO> users, String assignedBy) {
+        return unAssignByUUID(profileId, users.stream().map(BasicUserDTO::getUUID).collect(Collectors.toSet()), assignedBy);
+    }
+
+    public ProfileDTO unAssignByUUID(Long profileId, Collection<UUID> userUUIDs, String assignedBy) {
         final Profile profile = getProvider().findById(profileId).orElseThrow(()
                 -> new ProfileNotFoundException(this.getClass(), "No Profile exists with id '" + profileId + "'."));
 
 
         final List<ProfileCandidate> userGroupUsersToDelete = new ArrayList<>();
-        users.forEach(userDTO -> userGroupUsersToDelete.add(new ProfileCandidate(profileId, userDTO.getUUID())));
+        userUUIDs.forEach(uuid -> userGroupUsersToDelete.add(new ProfileCandidate(profileId, uuid)));
         profileCandidateProvider.deleteAll(userGroupUsersToDelete);
 
         //Remove any comment.

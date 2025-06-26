@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -81,7 +82,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
     }
 
 
-    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, securityService.adminPrivilege)")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Adds candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO addCandidates(
@@ -92,6 +93,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
             HttpServletRequest request) {
         return getController().assign(id, users, authentication.getName());
     }
+
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Adds candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -108,7 +110,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Removes candidates from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Removes candidates (unassign) from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/{id}/users/remove", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO removeCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
@@ -117,6 +119,20 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
             Authentication authentication,
             HttpServletRequest request) {
         return getController().unAssign(id, users, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Removes candidates (unassign) from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @DeleteMapping(value = "/{id}/users/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ProfileDTO removeCandidatesByUUID(
+            @Parameter(description = "Id of an existing Profile", required = true)
+            @PathVariable("id") Long id,
+            @Parameter(description = "UUIDs from users", required = true)
+            @PathVariable("userUUID") Collection<UUID> usersUUIDs,
+            Authentication authentication,
+            HttpServletRequest request) {
+        return getController().unAssignByUUID(id, usersUUIDs, authentication.getName());
     }
 
 

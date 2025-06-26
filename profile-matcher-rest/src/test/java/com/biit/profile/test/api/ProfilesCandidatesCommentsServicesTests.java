@@ -193,6 +193,7 @@ public class ProfilesCandidatesCommentsServicesTests extends AbstractTestNGSprin
                 .andReturn();
     }
 
+
     @Test(dependsOnMethods = "addCandidateToProfile")
     public void addCommentTooLongToCandidate1ToProfile() throws Exception {
         this.mockMvc

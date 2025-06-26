@@ -83,7 +83,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Adds candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Assigns a candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO addCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
@@ -96,7 +96,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Adds candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Assigns a candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/{id}/users/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO addCandidatesByUUID(
             @Parameter(description = "Id of an existing Profile", required = true)
@@ -110,7 +110,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Removes candidates (unassign) from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Unassign candidates (removes) from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/{id}/users/remove", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO removeCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
@@ -123,7 +123,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Removes candidates (unassign) from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Unassign candidates (removes) from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/{id}/users/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO removeCandidatesByUUID(
             @Parameter(description = "Id of an existing Profile", required = true)

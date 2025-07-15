@@ -19,6 +19,8 @@ import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
 import com.biit.profile.persistence.repositories.CadtIndividualProfileRepository;
 import com.biit.server.controller.ElementController;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
@@ -46,8 +48,9 @@ public class CadtIndividualProfileController extends ElementController<CadtIndiv
 
     protected CadtIndividualProfileController(CadtIndividualProfileProvider provider, CadtIndividualProfileConverter converter,
                                               MetaviewerProvider metaviewerProvider, ProfileProvider profileProvider, FactClient factClient,
-                                              ObjectMapper objectMapper) {
-        super(provider, converter);
+                                              ObjectMapper objectMapper,
+                                              List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
         this.metaviewerProvider = metaviewerProvider;
         this.profileProvider = profileProvider;
         this.factClient = factClient;

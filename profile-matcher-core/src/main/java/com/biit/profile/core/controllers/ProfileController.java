@@ -21,6 +21,8 @@ import com.biit.profile.persistence.entities.cadt.CadtCompetence;
 import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
 import com.biit.profile.persistence.repositories.ProfileRepository;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import com.biit.usermanager.dto.BasicUserDTO;
 import com.biit.usermanager.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +47,9 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
     protected ProfileController(ProfileProvider provider, ProfileConverter converter, ProfileEventSender eventSender,
                                 ProfileCandidateProvider profileCandidateProvider,
                                 ProfileCandidateCommentProvider profileCandidateCommentProvider,
-                                CadtIndividualProfileProvider cadtIndividualProfileProvider) {
-        super(provider, converter, eventSender);
+                                CadtIndividualProfileProvider cadtIndividualProfileProvider,
+                                List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, eventSender, userOrganizationProvider);
         this.profileCandidateProvider = profileCandidateProvider;
         this.profileCandidateCommentProvider = profileCandidateCommentProvider;
         this.cadtIndividualProfileProvider = cadtIndividualProfileProvider;

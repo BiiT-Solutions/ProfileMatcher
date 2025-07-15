@@ -12,8 +12,11 @@ import com.biit.profile.persistence.entities.ProfileCandidateComment;
 import com.biit.profile.persistence.entities.ProfileCandidateId;
 import com.biit.profile.persistence.repositories.ProfileCandidateCommentRepository;
 import com.biit.server.controller.ElementController;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,8 +27,9 @@ public class ProfileCandidateCommentController extends ElementController<Profile
     private final ProfileCandidateProvider profileCandidateProvider;
 
     protected ProfileCandidateCommentController(ProfileCandidateCommentProvider provider, ProfileCandidateCommentConverter converter,
-                                                ProfileCandidateProvider profileCandidateProvider) {
-        super(provider, converter);
+                                                ProfileCandidateProvider profileCandidateProvider,
+                                                List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
         this.profileCandidateProvider = profileCandidateProvider;
     }
 

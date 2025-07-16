@@ -9,35 +9,22 @@ import org.springframework.stereotype.Service;
 @Service("securityService")
 public class ProfilesSecurityService extends SecurityService {
 
-    private static final String VIEWER = "PROFILEMATCHER_VIEWER";
-    private static final String ADMIN = "PROFILEMATCHER_ADMIN";
-    private static final String EDITOR = "PROFILEMATCHER_EDITOR";
-
-    private String viewerPrivilege = null;
-    private String adminPrivilege = null;
-    private String editorPrivilege = null;
-
     @Override
     public String getViewerPrivilege() {
-        if (viewerPrivilege == null) {
-            viewerPrivilege = VIEWER.toUpperCase();
-        }
-        return viewerPrivilege;
+        return "PROFILEMATCHER_VIEWER";
     }
 
     @Override
     public String getAdminPrivilege() {
-        if (adminPrivilege == null) {
-            adminPrivilege = ADMIN.toUpperCase();
-        }
-        return adminPrivilege;
+        return "PROFILEMATCHER_ADMIN";
     }
 
     @Override
     public String getEditorPrivilege() {
-        if (editorPrivilege == null) {
-            editorPrivilege = EDITOR.toUpperCase();
-        }
-        return editorPrivilege;
+        return "PROFILEMATCHER_EDITOR";
+    }
+
+    public String getOrganizationAdminPrivilege() {
+        return "PROFILEMATCHER_ORGANIZATION_ADMIN";
     }
 }

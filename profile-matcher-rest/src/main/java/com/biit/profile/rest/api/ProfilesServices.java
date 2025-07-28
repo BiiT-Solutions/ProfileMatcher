@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -169,5 +170,45 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
             @Parameter(description = "id", required = true)
             @PathVariable("id") Long id, Authentication authentication, HttpServletRequest httpRequest) {
         return getController().getByProjectId(id);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Gets all profiles from a user UUID.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/users/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<ProfileDTO> getByUser(
+            @Parameter(description = "id from a user", required = true)
+            @PathVariable("id") UUID id, Authentication authentication, HttpServletRequest httpRequest) {
+        return getController().getByUserId(id);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Assign users to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(path = "/{id}")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void assignToUsers(
+            @Parameter(description = "id from the profile", required = true)
+            @PathVariable("id") Long id,
+            @RequestBody Collection<UserDTO> userDTOS,
+            Authentication authentication, HttpServletRequest httpRequest) {
+        getController().assignUsers(id, userDTOS, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Assign profiles to a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(path = "/users/{id}")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void assignToUsers(
+            @Parameter(description = "id", required = true)
+            @PathVariable("id") UUID id,
+            @RequestBody Collection<ProfileDTO> profileDTOS,
+            Authentication authentication, HttpServletRequest httpRequest) {
+        getController().assignProfiles(id, profileDTOS, authentication.getName());
     }
 }

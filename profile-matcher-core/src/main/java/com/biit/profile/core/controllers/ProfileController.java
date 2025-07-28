@@ -15,10 +15,12 @@ import com.biit.profile.core.providers.ProfileCandidateCommentProvider;
 import com.biit.profile.core.providers.ProfileCandidateProvider;
 import com.biit.profile.core.providers.ProfileProvider;
 import com.biit.profile.core.providers.ProjectProfileProvider;
+import com.biit.profile.core.providers.UserProfileProvider;
 import com.biit.profile.logger.ProfileLogger;
 import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.entities.ProfileCandidate;
 import com.biit.profile.persistence.entities.ProjectProfile;
+import com.biit.profile.persistence.entities.UserProfile;
 import com.biit.profile.persistence.entities.cadt.CadtCompetence;
 import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
@@ -45,6 +47,7 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
     private final ProfileCandidateCommentProvider profileCandidateCommentProvider;
     private final CadtIndividualProfileProvider cadtIndividualProfileProvider;
     private final ProjectProfileProvider projectProfileProvider;
+    private final UserProfileProvider userProfileProvider;
 
     @Autowired
     protected ProfileController(ProfileProvider provider, ProfileConverter converter, ProfileEventSender eventSender,
@@ -52,12 +55,13 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
                                 ProfileCandidateCommentProvider profileCandidateCommentProvider,
                                 CadtIndividualProfileProvider cadtIndividualProfileProvider,
                                 List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider,
-                                ProjectProfileProvider projectProfileProvider) {
+                                ProjectProfileProvider projectProfileProvider, UserProfileProvider userProfileProvider) {
         super(provider, converter, eventSender, userOrganizationProvider);
         this.profileCandidateProvider = profileCandidateProvider;
         this.profileCandidateCommentProvider = profileCandidateCommentProvider;
         this.cadtIndividualProfileProvider = cadtIndividualProfileProvider;
         this.projectProfileProvider = projectProfileProvider;
+        this.userProfileProvider = userProfileProvider;
     }
 
     @Override
@@ -166,5 +170,38 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         final Set<ProjectProfile> projectProfiles = projectProfileProvider.findByProjectId(projectId);
         return convertAll(getProvider().findByIdIn(projectProfiles.stream().map(p -> p.getId().getProfileId())
                 .collect(Collectors.toSet())));
+    }
+
+
+    public List<ProfileDTO> getByUserId(UUID userId) {
+        final Set<UserProfile> projectProfiles = userProfileProvider.findByUserId(userId);
+        return convertAll(getProvider().findByIdIn(projectProfiles.stream().map(p -> p.getId().getProfileId())
+                .collect(Collectors.toSet())));
+    }
+
+
+    public void assignProfiles(UUID userId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
+        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByUserId(userId);
+        final List<Long> existingProfilesInProject = existingProjectProfiles.stream().map(p -> p.getId().getProfileId()).toList();
+        final List<ProfileDTO> profilesToAdd = profilesDTOs.stream().filter(p -> !existingProfilesInProject.contains(p.getId())).toList();
+        final List<UserProfile> userProfiles = new ArrayList<>();
+        profilesToAdd.forEach(profile ->
+                userProfiles.add(new UserProfile(userId, profile.getId())));
+        if (!userProfiles.isEmpty()) {
+            userProfileProvider.saveAll(userProfiles);
+        }
+    }
+
+
+    public void assignUsers(Long profileId, Collection<UserDTO> userDTOS, String creatorName) {
+        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByProfileId(profileId);
+        final List<UUID> existingUsersInProfile = existingProjectProfiles.stream().map(p -> p.getId().getUserId()).toList();
+        final List<UserDTO> profilesToAdd = userDTOS.stream().filter(u -> !existingUsersInProfile.contains(u.getUUID())).toList();
+        final List<UserProfile> userProfiles = new ArrayList<>();
+        profilesToAdd.forEach(user ->
+                userProfiles.add(new UserProfile(user.getUUID(), profileId)));
+        if (!userProfiles.isEmpty()) {
+            userProfileProvider.saveAll(userProfiles);
+        }
     }
 }

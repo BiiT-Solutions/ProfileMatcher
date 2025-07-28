@@ -64,13 +64,28 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
     }
 
 
-    public void assign(Long projectId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
+    public void assignByProject(Long projectId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
         final Set<ProjectProfile> existingProjectProfiles = projectProfileProvider.findByProjectId(projectId);
         final List<Long> existingProfilesInProject = existingProjectProfiles.stream().map(p -> p.getId().getProfileId()).toList();
         final List<ProfileDTO> profilesToAdd = profilesDTOs.stream().filter(p -> !existingProfilesInProject.contains(p.getId())).toList();
         final List<ProjectProfile> projectProfiles = new ArrayList<>();
         profilesToAdd.forEach(profile ->
                 projectProfiles.add(new ProjectProfile(projectId, profile.getId())));
-        projectProfileProvider.saveAll(projectProfiles);
+        if (!projectProfiles.isEmpty()) {
+            projectProfileProvider.saveAll(projectProfiles);
+        }
+    }
+
+
+    public void assignByProfile(Long profileId, Collection<ProjectDTO> projectDTOS, String creatorName) {
+        final Set<ProjectProfile> existingProjectProfiles = projectProfileProvider.findByProfileId(profileId);
+        final List<Long> existingProfilesInProject = existingProjectProfiles.stream().map(p -> p.getId().getProjectId()).toList();
+        final List<ProjectDTO> projectsToAdd = projectDTOS.stream().filter(p -> !existingProfilesInProject.contains(p.getId())).toList();
+        final List<ProjectProfile> projectProfiles = new ArrayList<>();
+        projectsToAdd.forEach(project ->
+                projectProfiles.add(new ProjectProfile(project.getId(), profileId)));
+        if (!projectProfiles.isEmpty()) {
+            projectProfileProvider.saveAll(projectProfiles);
+        }
     }
 }

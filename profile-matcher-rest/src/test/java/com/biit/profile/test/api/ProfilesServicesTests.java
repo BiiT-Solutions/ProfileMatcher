@@ -32,11 +32,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -54,12 +56,14 @@ public class ProfilesServicesTests extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME_1 = "User1";
     private static final String USER_LASTNAME_1 = "Lastname1";
     private static final String USER_EMAIL_1 = "email1@test.com";
+    private static final UUID USER_UUID_1 = UUID.randomUUID();
 
     private static final Long USER_ID_2 = 2L;
     private static final String USER_USERNAME_2 = "username2";
     private static final String USER_NAME_2 = "User2";
     private static final String USER_LASTNAME_2 = "Lastname2";
     private static final String USER_EMAIL_2 = "email2@test.com";
+    private static final UUID USER_UUID_2 = UUID.randomUUID();
 
     private final static String USER_NAME = "user";
     private final static String USER_PASSWORD = "password";
@@ -217,7 +221,7 @@ public class ProfilesServicesTests extends AbstractTestNGSpringContextTests {
         userDTO2.setId(2L);
         users.add(userDTO2);
 
-        final MvcResult createResult = this.mockMvc
+        this.mockMvc
                 .perform(post("/profiles/" + profile.getId() + "/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(users))
@@ -228,7 +232,7 @@ public class ProfilesServicesTests extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dependsOnMethods = "addCandidateToProfile")
-    public void removeCandidateToProfile() throws Exception {
+    public void removeCandidateFromProfile() throws Exception {
         final List<UserDTO> users = new ArrayList<>();
         UserDTO userDTO1 = new UserDTO(USER_USERNAME_1, USER_NAME_1, USER_LASTNAME_1, USER_EMAIL_1);
         userDTO1.setId(USER_ID_1);
@@ -246,5 +250,52 @@ public class ProfilesServicesTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
+    }
+
+
+    @Test(dependsOnMethods = "addCandidateToProfile")
+    public void assignUsersToProfile() throws Exception {
+        final List<UserDTO> users = new ArrayList<>();
+        UserDTO userDTO1 = new UserDTO(USER_USERNAME_1, USER_NAME_1, USER_LASTNAME_1, USER_EMAIL_1);
+        userDTO1.setUID(USER_UUID_1.toString());
+        users.add(userDTO1);
+
+        UserDTO userDTO2 = new UserDTO(USER_USERNAME_2, USER_NAME_2, USER_LASTNAME_2, USER_EMAIL_2);
+        userDTO2.setUID(USER_UUID_2.toString());
+        users.add(userDTO2);
+
+        authenticatedUserProvider.createUser(userDTO1.getUsername(), userDTO1.getUID(), userDTO1.getName(),
+                userDTO1.getLastName(), userDTO1.getPassword(), Locale.getDefault());
+
+        authenticatedUserProvider.createUser(userDTO2.getUsername(), userDTO2.getUID(), userDTO2.getName(),
+                userDTO2.getLastName(), userDTO2.getPassword(), Locale.getDefault());
+
+
+         this.mockMvc
+                .perform(put("/profiles/" + profile.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(users))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andReturn();
+    }
+
+
+    @Test(dependsOnMethods = "assignUsersToProfile")
+    public void getProfilesFromUser() throws Exception {
+        final MvcResult createResult = this.mockMvc
+                .perform(get("/profiles/users/" + USER_UUID_1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        final List<ProfileDTO> profiles =
+                Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), ProfileDTO[].class));
+        Assert.assertEquals(profiles.size(), 1);
+        Assert.assertEquals(profiles.get(0).getName(), PROFILE_NAME);
+        Assert.assertEquals(profiles.get(0).getTrackingCode(), PROFILE_TRACKING_CODE);
     }
 }

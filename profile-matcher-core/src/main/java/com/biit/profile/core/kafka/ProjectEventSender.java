@@ -1,9 +1,10 @@
 package com.biit.profile.core.kafka;
 
 
-import com.biit.profile.core.models.ProfileDTO;
 import com.biit.kafka.events.EventSender;
 import com.biit.kafka.events.KafkaEventTemplate;
+import com.biit.profile.core.models.ProfileDTO;
+import com.biit.profile.core.models.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +13,13 @@ import org.springframework.stereotype.Component;
  * EVENT_TYPE will define the FACT_TYPE custom property on the event.
  */
 @Component
-public class ProfileEventSender extends EventSender<ProfileDTO> {
+public class ProjectEventSender extends EventSender<ProjectDTO> {
 
-    private static final String MY_ENTITY_EVENT_TYPE = "Profile";
+    private static final String MY_ENTITY_EVENT_TYPE = "Project";
 
     public static final String TAG = "ProfileMatcher";
 
-    public ProfileEventSender(@Autowired(required = false) KafkaEventTemplate kafkaTemplate) {
+    public ProjectEventSender(@Autowired(required = false) KafkaEventTemplate kafkaTemplate) {
         super(kafkaTemplate, TAG, MY_ENTITY_EVENT_TYPE);
     }
 }

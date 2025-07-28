@@ -5,6 +5,8 @@ import com.biit.profile.core.exceptions.CandidateNotFoundException;
 import com.biit.profile.core.exceptions.CommentTooLongException;
 import com.biit.profile.core.exceptions.InvalidFormException;
 import com.biit.profile.core.exceptions.ProfileNotFoundException;
+import com.biit.profile.core.exceptions.ProjectAlreadyExistsException;
+import com.biit.profile.core.exceptions.ProjectNotFoundException;
 import com.biit.profile.logger.ProfileLogger;
 import com.biit.profile.persistence.entities.ProfileCandidateComment;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
@@ -81,5 +83,11 @@ public class ProfileExceptionControllerAdvice extends ServerExceptionControllerA
     public ResponseEntity<Object> invalidValueException(Exception ex) {
         ProfileLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_parameter", ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ProjectAlreadyExistsException.class)
+    public ResponseEntity<Object> projectAlreadyExistsException(Exception ex) {
+        ProfileLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "project_already_exists", ex), HttpStatus.BAD_REQUEST);
     }
 }

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
@@ -155,5 +157,17 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
             @Parameter(description = "Minimum competence number to match", required = true) @PathVariable("threshold") int threshold,
             Authentication authentication, HttpServletRequest request) {
         return getController().findByCandidate(candidateId, threshold, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Gets all profiles from a project.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/projects/{id}")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public List<ProfileDTO> getByProfile(
+            @Parameter(description = "id", required = true)
+            @PathVariable("id") Long id, Authentication authentication, HttpServletRequest httpRequest) {
+        return getController().getByProjectId(id);
     }
 }

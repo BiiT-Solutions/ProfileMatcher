@@ -14,9 +14,11 @@ import com.biit.profile.core.providers.ICadtController;
 import com.biit.profile.core.providers.ProfileCandidateCommentProvider;
 import com.biit.profile.core.providers.ProfileCandidateProvider;
 import com.biit.profile.core.providers.ProfileProvider;
+import com.biit.profile.core.providers.ProjectProfileProvider;
 import com.biit.profile.logger.ProfileLogger;
 import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.entities.ProfileCandidate;
+import com.biit.profile.persistence.entities.ProjectProfile;
 import com.biit.profile.persistence.entities.cadt.CadtCompetence;
 import com.biit.profile.persistence.entities.cadt.CadtIndividualProfile;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;
@@ -42,17 +44,20 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
     private final ProfileCandidateProvider profileCandidateProvider;
     private final ProfileCandidateCommentProvider profileCandidateCommentProvider;
     private final CadtIndividualProfileProvider cadtIndividualProfileProvider;
+    private final ProjectProfileProvider projectProfileProvider;
 
     @Autowired
     protected ProfileController(ProfileProvider provider, ProfileConverter converter, ProfileEventSender eventSender,
                                 ProfileCandidateProvider profileCandidateProvider,
                                 ProfileCandidateCommentProvider profileCandidateCommentProvider,
                                 CadtIndividualProfileProvider cadtIndividualProfileProvider,
-                                List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
+                                List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider,
+                                ProjectProfileProvider projectProfileProvider) {
         super(provider, converter, eventSender, userOrganizationProvider);
         this.profileCandidateProvider = profileCandidateProvider;
         this.profileCandidateCommentProvider = profileCandidateCommentProvider;
         this.cadtIndividualProfileProvider = cadtIndividualProfileProvider;
+        this.projectProfileProvider = projectProfileProvider;
     }
 
     @Override
@@ -154,5 +159,12 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         } catch (InvalidProfileValueException e) {
             ProfileLogger.errorMessage(this.getClass(), e);
         }
+    }
+
+
+    public List<ProfileDTO> getByProjectId(Long projectId) {
+        final Set<ProjectProfile> projectProfiles = projectProfileProvider.findByProjectId(projectId);
+        return convertAll(getProvider().findByIdIn(projectProfiles.stream().map(p -> p.getId().getProfileId())
+                .collect(Collectors.toSet())));
     }
 }

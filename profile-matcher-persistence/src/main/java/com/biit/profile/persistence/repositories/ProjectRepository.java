@@ -11,11 +11,11 @@ import java.util.Optional;
 @Transactional
 public interface ProjectRepository extends ElementRepository<Project, Long> {
 
-    Optional<Project> findByNameIgnoreCaseAndOrganizationIgnoreCase(String name, String organization);
+    Optional<Project> findByNameIgnoreCaseAndCreatedOnIgnoreCase(String name, String organization);
 
-    Optional<Project> findByNameByHashAndOrganizationByHash(String name, String organization);
+    Optional<Project> findByNameByHashAndCreatedOnHash(String name, String organization);
 
-    long deleteByNameIgnoreCaseAndOrganizationIgnoreCase(String name, String organization);
+    long deleteByNameIgnoreCaseAndCreatedOnIgnoreCase(String name, String organization);
 
-    long deleteByNameByHashAndOrganizationByHash(String name, String organization);
+    long deleteByNameByHashAndCreatedOnHash(String name, String organization);
 }

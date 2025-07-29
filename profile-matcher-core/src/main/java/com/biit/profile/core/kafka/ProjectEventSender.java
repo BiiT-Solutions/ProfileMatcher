@@ -3,7 +3,6 @@ package com.biit.profile.core.kafka;
 
 import com.biit.kafka.events.EventSender;
 import com.biit.kafka.events.KafkaEventTemplate;
-import com.biit.profile.core.models.ProfileDTO;
 import com.biit.profile.core.models.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

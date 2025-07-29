@@ -3,7 +3,6 @@ package com.biit.profile.core.controllers;
 
 import com.biit.profile.core.converters.ProfileCandidateCommentConverter;
 import com.biit.profile.core.converters.models.ProfileCandidateCommentConverterRequest;
-import com.biit.profile.core.exceptions.CandidateNotFoundException;
 import com.biit.profile.core.exceptions.CommentTooLongException;
 import com.biit.profile.core.models.ProfileCandidateCommentDTO;
 import com.biit.profile.core.providers.ProfileCandidateCommentProvider;
@@ -59,11 +58,6 @@ public class ProfileCandidateCommentController extends ElementController<Profile
 
         //Delete previous one if exists.
         getProvider().deleteByIdProfileIdAndIdUserUid(profileId, userUid);
-
-        //Checks that exist the candidate
-        if (profileCandidateProvider.findByProfileIdAndUserUid(profileId, userUid).isEmpty()) {
-            throw new CandidateNotFoundException(this.getClass(), "No candidate '" + userUid + "' found for profile '" + profileId + "'.");
-        }
 
         return getProvider().save(new ProfileCandidateComment(profileId, userUid, comment));
     }

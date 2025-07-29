@@ -6,7 +6,6 @@ import com.biit.profile.core.exceptions.CommentTooLongException;
 import com.biit.profile.core.exceptions.InvalidFormException;
 import com.biit.profile.core.exceptions.ProfileNotFoundException;
 import com.biit.profile.core.exceptions.ProjectAlreadyExistsException;
-import com.biit.profile.core.exceptions.ProjectNotFoundException;
 import com.biit.profile.logger.ProfileLogger;
 import com.biit.profile.persistence.entities.ProfileCandidateComment;
 import com.biit.profile.persistence.entities.exceptions.InvalidProfileValueException;

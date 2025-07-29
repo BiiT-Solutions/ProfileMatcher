@@ -19,17 +19,17 @@ public class ProjectProvider extends ElementProvider<Project, Long, ProjectRepos
 
     public Optional<Project> findByNameAndOrganization(String name, String organization) {
         if (getEncryptionKey() != null && !getEncryptionKey().isBlank()) {
-            return getRepository().findByNameIgnoreCaseAndOrganizationIgnoreCase(name, organization);
+            return getRepository().findByNameIgnoreCaseAndCreatedOnIgnoreCase(name, organization);
         }
-        return getRepository().findByNameByHashAndOrganizationByHash(name, organization);
+        return getRepository().findByNameByHashAndCreatedOnHash(name, organization);
     }
 
 
     public long deleteByNameAndOrganization(String name, String organization) {
         if (getEncryptionKey() != null && !getEncryptionKey().isBlank()) {
-            return getRepository().deleteByNameIgnoreCaseAndOrganizationIgnoreCase(name, organization);
+            return getRepository().deleteByNameIgnoreCaseAndCreatedOnIgnoreCase(name, organization);
         }
-        return getRepository().deleteByNameByHashAndOrganizationByHash(name, organization);
+        return getRepository().deleteByNameByHashAndCreatedOnHash(name, organization);
     }
 
 }

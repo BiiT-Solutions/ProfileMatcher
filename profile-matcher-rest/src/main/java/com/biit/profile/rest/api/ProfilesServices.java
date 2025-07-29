@@ -74,7 +74,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Gets all candidates from a profile.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}/candidates", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<UUID> getCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
             @PathVariable("id") Long id,
@@ -87,7 +87,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Assigns a candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}/candidates", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO addCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
             @PathVariable("id") Long id,
@@ -100,7 +100,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Assigns a candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/{id}/users/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}/candidates/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO addCandidatesByUUID(
             @Parameter(description = "Id of an existing Profile", required = true)
             @PathVariable("id") Long id,
@@ -114,7 +114,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Unassign candidates (removes) from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/{id}/users/remove", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}/candidates/remove", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO removeCandidates(
             @Parameter(description = "Id of an existing Profile", required = true)
             @PathVariable("id") Long id,
@@ -127,7 +127,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Unassign candidates (removes) from a Profile.", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping(value = "/{id}/users/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id}/candidates/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO removeCandidatesByUUID(
             @Parameter(description = "Id of an existing Profile", required = true)
             @PathVariable("id") Long id,
@@ -176,19 +176,19 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
             + " @securityService.organizationAdminPrivilege)")
     @Operation(summary = "Gets all profiles from a user UUID.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(path = "/users/{id}")
+    @GetMapping(path = "/users/{uuid}")
     @ResponseStatus(value = HttpStatus.OK)
     public List<ProfileDTO> getByUser(
-            @Parameter(description = "id from a user", required = true)
-            @PathVariable("id") UUID id, Authentication authentication, HttpServletRequest httpRequest) {
-        return getController().getByUserId(id);
+            @Parameter(description = "Uuid from a user", required = true)
+            @PathVariable("uuid") UUID uuid, Authentication authentication, HttpServletRequest httpRequest) {
+        return getController().getByUserId(uuid);
     }
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
             + " @securityService.organizationAdminPrivilege)")
     @Operation(summary = "Assign users to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(path = "/{id}")
+    @PutMapping(path = "/{id}/users")
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void assignToUsers(
             @Parameter(description = "id from the profile", required = true)
@@ -201,8 +201,23 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
     @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
             + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Unassign users to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/{id}/users/remove")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void unassignToUsers(
+            @Parameter(description = "id from the profile", required = true)
+            @PathVariable("id") Long id,
+            @RequestBody Collection<UserDTO> userDTOS,
+            Authentication authentication, HttpServletRequest httpRequest) {
+        getController().unassignUsers(id, userDTOS, authentication.getName());
+    }
+
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
     @Operation(summary = "Assign profiles to a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(path = "/users/{id}")
+    @PutMapping(path = "/users/{id}/profiles")
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void assignToUsers(
             @Parameter(description = "id", required = true)
@@ -210,5 +225,19 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
             @RequestBody Collection<ProfileDTO> profileDTOS,
             Authentication authentication, HttpServletRequest httpRequest) {
         getController().assignProfiles(id, profileDTOS, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Assign profiles to a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/users/{id}/profiles/remove")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void unassignToUsers(
+            @Parameter(description = "id", required = true)
+            @PathVariable("id") UUID id,
+            @RequestBody Collection<ProfileDTO> profileDTOS,
+            Authentication authentication, HttpServletRequest httpRequest) {
+        getController().unassignProfiles(id, profileDTOS, authentication.getName());
     }
 }

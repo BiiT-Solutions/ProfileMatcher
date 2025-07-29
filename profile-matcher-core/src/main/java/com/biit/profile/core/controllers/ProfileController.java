@@ -192,6 +192,15 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         }
     }
 
+    public void unassignProfiles(UUID userId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
+        final List<UserProfile> userProfiles = new ArrayList<>();
+        profilesDTOs.forEach(profile ->
+                userProfiles.add(new UserProfile(userId, profile.getId())));
+        if (!userProfiles.isEmpty()) {
+            userProfileProvider.deleteAll(userProfiles);
+        }
+    }
+
 
     public void assignUsers(Long profileId, Collection<UserDTO> userDTOS, String creatorName) {
         final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByProfileId(profileId);
@@ -202,6 +211,15 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
                 userProfiles.add(new UserProfile(user.getUUID(), profileId)));
         if (!userProfiles.isEmpty()) {
             userProfileProvider.saveAll(userProfiles);
+        }
+    }
+
+    public void unassignUsers(Long profileId, Collection<UserDTO> userDTOS, String creatorName) {
+        final List<UserProfile> userProfiles = new ArrayList<>();
+        userDTOS.forEach(user ->
+                userProfiles.add(new UserProfile(user.getUUID(), profileId)));
+        if (!userProfiles.isEmpty()) {
+            userProfileProvider.deleteAll(userProfiles);
         }
     }
 }

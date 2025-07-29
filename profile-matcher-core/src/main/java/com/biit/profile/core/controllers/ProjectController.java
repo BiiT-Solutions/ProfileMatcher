@@ -76,6 +76,15 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
         }
     }
 
+    public void unassignByProject(Long projectId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
+        final List<ProjectProfile> projectProfiles = new ArrayList<>();
+        profilesDTOs.forEach(profile ->
+                projectProfiles.add(new ProjectProfile(projectId, profile.getId())));
+        if (!projectProfiles.isEmpty()) {
+            projectProfileProvider.deleteAll(projectProfiles);
+        }
+    }
+
 
     public void assignByProfile(Long profileId, Collection<ProjectDTO> projectDTOS, String creatorName) {
         final Set<ProjectProfile> existingProjectProfiles = projectProfileProvider.findByProfileId(profileId);
@@ -86,6 +95,15 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
                 projectProfiles.add(new ProjectProfile(project.getId(), profileId)));
         if (!projectProfiles.isEmpty()) {
             projectProfileProvider.saveAll(projectProfiles);
+        }
+    }
+
+    public void unassignByProfile(Long profileId, Collection<ProjectDTO> projectDTOS, String creatorName) {
+        final List<ProjectProfile> projectProfiles = new ArrayList<>();
+        projectDTOS.forEach(project ->
+                projectProfiles.add(new ProjectProfile(project.getId(), profileId)));
+        if (!projectProfiles.isEmpty()) {
+            projectProfileProvider.deleteAll(projectProfiles);
         }
     }
 }

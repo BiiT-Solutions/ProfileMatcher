@@ -100,6 +100,7 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
         vacancyProfile.setCreatedBy(droolsSubmittedForm.getSubmittedBy());
         vacancyProfile.setCreatedAt(droolsSubmittedForm.getSubmittedAt());
         vacancyProfile.setOrganization(droolsSubmittedForm.getOrganization());
+        vacancyProfile.setCreatedOn(droolsSubmittedForm.getOrganization());
         vacancyProfile.setContent(droolsSubmittedForm.toJson());
         vacancyProfile.setDroolsId(droolsSubmittedForm.getId());
         vacancyProfile.setFormVersion(droolsSubmittedForm.getVersion());

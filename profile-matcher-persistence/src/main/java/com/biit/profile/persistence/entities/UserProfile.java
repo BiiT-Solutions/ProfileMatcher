@@ -20,7 +20,7 @@ import java.util.UUID;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "user_profiles", indexes = {
-        @Index(name = "ind_users", columnList = "user_id"),
+        @Index(name = "ind_users", columnList = "user_uid"),
         @Index(name = "ind_profiles", columnList = "profile_id"),
 })
 public class UserProfile extends StorableObject {

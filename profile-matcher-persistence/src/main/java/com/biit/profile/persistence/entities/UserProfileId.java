@@ -13,8 +13,8 @@ public class UserProfileId implements Serializable {
     @Serial
     private static final long serialVersionUID = 3529300883056582198L;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @Column(name = "user_uid", nullable = false)
+    private UUID userUid;
 
     @Column(name = "profile_id", nullable = false)
     private Long profileId;
@@ -26,19 +26,19 @@ public class UserProfileId implements Serializable {
         super();
     }
 
-    public UserProfileId(UUID userId, Long profileId, Long projectId) {
+    public UserProfileId(UUID userUid, Long profileId, Long projectId) {
         this();
-        this.userId = userId;
+        this.userUid = userUid;
         this.profileId = profileId;
         this.projectId = projectId;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getUserUid() {
+        return userUid;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUserUid(UUID userId) {
+        this.userUid = userId;
     }
 
     public Long getProfileId() {

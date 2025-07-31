@@ -250,4 +250,16 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
             Authentication authentication, HttpServletRequest httpRequest) {
         getController().unassignProfiles(id, profileDTOS, authentication.getName());
     }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
+    @Operation(summary = "Gets all users from a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Set<UUID> getUsers(
+            @Parameter(description = "Id of an existing Profile", required = true)
+            @PathVariable("id") Long id,
+            Authentication authentication,
+            HttpServletRequest request) {
+        return getController().getUsers(id).stream().map(profileCandidate -> profileCandidate.getId().getUserUid())
+                .collect(Collectors.toSet());
+    }
 }

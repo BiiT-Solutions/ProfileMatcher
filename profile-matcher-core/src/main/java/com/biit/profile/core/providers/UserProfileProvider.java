@@ -31,4 +31,9 @@ public class UserProfileProvider extends StorableObjectProvider<UserProfile, Use
         return getRepository().findByIdProfileId(profileId);
     }
 
+
+    public void deleteByProjectIdAndProfileId(Long projectId, Long profileId) {
+        getRepository().deleteByIdProjectIdAndIdProfileId(projectId, profileId);
+    }
+
 }

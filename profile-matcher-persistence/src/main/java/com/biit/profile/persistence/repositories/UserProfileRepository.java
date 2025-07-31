@@ -19,4 +19,6 @@ public interface UserProfileRepository extends StorableObjectRepository<UserProf
     Set<UserProfile> findByIdUserIdAndIdProjectId(UUID userId, Long projectId);
 
     Set<UserProfile> findByIdProfileId(Long profileId);
+
+    void deleteByIdProjectIdAndIdProfileId(Long projectId, Long profileId);
 }

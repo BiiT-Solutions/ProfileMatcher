@@ -212,7 +212,7 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
 
     public void assignUsers(Long profileId, Collection<UserDTO> userDTOS, String creatorName) {
         final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByProfileId(profileId);
-        final List<UUID> existingUsersInProfile = existingProjectProfiles.stream().map(p -> p.getId().getUserId()).toList();
+        final List<UUID> existingUsersInProfile = existingProjectProfiles.stream().map(p -> p.getId().getUserUid()).toList();
         final List<UserDTO> profilesToAdd = userDTOS.stream().filter(u -> !existingUsersInProfile.contains(u.getUUID())).toList();
         final List<UserProfile> userProfiles = new ArrayList<>();
         profilesToAdd.forEach(user ->
@@ -229,5 +229,9 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         if (!userProfiles.isEmpty()) {
             userProfileProvider.deleteAll(userProfiles);
         }
+    }
+
+    public Set<UserProfile> getUsers(Long profileId) {
+        return userProfileProvider.findByProfileId(profileId);
     }
 }

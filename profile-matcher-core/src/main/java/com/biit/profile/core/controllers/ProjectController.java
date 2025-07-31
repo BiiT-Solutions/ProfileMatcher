@@ -137,7 +137,7 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
 
     public void assignUsersToProfiles(Long projectId, Long profileId, Collection<UserDTO> userDTOS, String creatorName) {
         final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByProfileId(profileId);
-        final List<UUID> existingUsersInProfile = existingProjectProfiles.stream().map(p -> p.getId().getUserId()).toList();
+        final List<UUID> existingUsersInProfile = existingProjectProfiles.stream().map(p -> p.getId().getUserUid()).toList();
         final List<UserDTO> profilesToAdd = userDTOS.stream().filter(u -> !existingUsersInProfile.contains(u.getUUID())).toList();
         final List<UserProfile> userProfiles = new ArrayList<>();
         profilesToAdd.forEach(user ->

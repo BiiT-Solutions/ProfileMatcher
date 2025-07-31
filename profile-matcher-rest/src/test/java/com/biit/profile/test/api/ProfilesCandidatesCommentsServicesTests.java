@@ -184,12 +184,12 @@ public class ProfilesCandidatesCommentsServicesTests extends AbstractTestNGSprin
         users.add(userDTO2);
 
         this.mockMvc
-                .perform(put("/profiles/" + profile.getId() + "/users")
+                .perform(put("/profiles/" + profile.getId() + "/candidates")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(users))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
 

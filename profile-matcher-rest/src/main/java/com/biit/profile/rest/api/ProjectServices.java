@@ -9,6 +9,7 @@ import com.biit.profile.core.providers.ProjectProvider;
 import com.biit.profile.persistence.entities.Project;
 import com.biit.profile.persistence.repositories.ProjectRepository;
 import com.biit.server.rest.ElementServices;
+import com.biit.usermanager.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/projects")
@@ -104,5 +106,68 @@ public class ProjectServices extends ElementServices<Project, Long, ProjectDTO, 
             @RequestBody Collection<ProjectDTO> projectDTOS,
             Authentication authentication, HttpServletRequest httpRequest) {
         getController().unassignByProfile(id, projectDTOS, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Assign users to a profile in a project.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(path = "/{id}/profiles/{profileId}/users")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void assignToUsers(
+            @Parameter(description = "id from the project", required = true)
+            @PathVariable("id") Long id,
+            @Parameter(description = "id from the profile", required = true)
+            @PathVariable("profileId") Long profileId,
+            @RequestBody Collection<UserDTO> userDTOS,
+            Authentication authentication, HttpServletRequest httpRequest) {
+        getController().assignUsersToProfiles(id, profileId, userDTOS, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Unassign users to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/{id}/profiles/{profileId}/users/remove")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void unassignToUsers(
+            @Parameter(description = "id from the project", required = true)
+            @PathVariable("id") Long id,
+            @Parameter(description = "id from the profile", required = true)
+            @PathVariable("profileId") Long profileId,
+            @RequestBody Collection<UserDTO> userDTOS,
+            Authentication authentication, HttpServletRequest httpRequest) {
+        getController().unassignUsersFromProfiles(id, profileId, userDTOS, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Assign profiles to a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(path = "/{id}/users/{uuid}/profiles")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void assignToUsers(
+            @Parameter(description = "id from the project", required = true)
+            @PathVariable("id") Long projectId,
+            @Parameter(description = "uuid", required = true)
+            @PathVariable("uuid") UUID userId,
+            @RequestBody Collection<ProfileDTO> profileDTOS,
+            Authentication authentication, HttpServletRequest httpRequest) {
+        getController().assignUsersToProfiles(projectId, userId, profileDTOS, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege, @securityService.editorPrivilege,"
+            + " @securityService.organizationAdminPrivilege)")
+    @Operation(summary = "Assign profiles to a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/{id}/users/{uuid}/profiles/remove")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void unassignUsersFromProfile(
+            @Parameter(description = "id from the project", required = true)
+            @PathVariable("id") Long projectId,
+            @Parameter(description = "uuid", required = true)
+            @PathVariable("uuid") UUID uuid,
+            @RequestBody Collection<ProfileDTO> profileDTOS,
+            Authentication authentication, HttpServletRequest httpRequest) {
+        getController().unassignUsersFromProfiles(projectId, uuid, profileDTOS, authentication.getName());
     }
 }

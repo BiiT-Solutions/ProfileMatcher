@@ -35,9 +35,9 @@ public class UserProfile extends StorableObject {
         super();
     }
 
-    public UserProfile(UUID userId, Long profileId) {
+    public UserProfile(UUID userId, Long profileId, Long projectId) {
         this();
-        setId(new UserProfileId(userId, profileId));
+        setId(new UserProfileId(userId, profileId, projectId));
     }
 
     public UserProfileId getId() {

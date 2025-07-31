@@ -22,6 +22,10 @@ public class UserProfileProvider extends StorableObjectProvider<UserProfile, Use
         return getRepository().findByIdUserId(userId);
     }
 
+    public Set<UserProfile> findByUserIdAndProjectId(UUID userId, Long projectId) {
+        return getRepository().findByIdUserIdAndIdProjectId(userId, projectId);
+    }
+
 
     public Set<UserProfile> findByProfileId(Long profileId) {
         return getRepository().findByIdProfileId(profileId);

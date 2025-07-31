@@ -222,12 +222,12 @@ public class ProfilesServicesTests extends AbstractTestNGSpringContextTests {
         users.add(userDTO2);
 
         this.mockMvc
-                .perform(put("/profiles/" + profile.getId() + "/users")
+                .perform(put("/profiles/" + profile.getId() + "/candidates")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(users))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
 
@@ -243,12 +243,12 @@ public class ProfilesServicesTests extends AbstractTestNGSpringContextTests {
         users.add(userDTO2);
 
         final MvcResult createResult = this.mockMvc
-                .perform(post("/profiles/" + profile.getId() + "/users/remove")
+                .perform(post("/profiles/" + profile.getId() + "/candidates/remove")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(users))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
 
@@ -272,12 +272,12 @@ public class ProfilesServicesTests extends AbstractTestNGSpringContextTests {
 
 
         this.mockMvc
-                .perform(put("/profiles/" + profile.getId()+"/users")
+                .perform(put("/profiles/" + profile.getId()+"/candidates")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(users))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
 
@@ -285,7 +285,7 @@ public class ProfilesServicesTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "assignUsersToProfile")
     public void getProfilesFromUser() throws Exception {
         final MvcResult createResult = this.mockMvc
-                .perform(get("/profiles/users/" + USER_UUID_1)
+                .perform(get("/profiles/candidates/" + USER_UUID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                         .with(csrf()))

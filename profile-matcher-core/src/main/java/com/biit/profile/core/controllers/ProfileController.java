@@ -107,6 +107,14 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
     }
 
 
+
+    public List<ProfileDTO> getByCandidateId(UUID userId) {
+        final Set<ProfileCandidate> projectProfilesCandidates = profileCandidateProvider.findByUserUid(userId);
+        return convertAll(getProvider().findByIdIn(projectProfilesCandidates.stream().map(p -> p.getId().getProfileId())
+                .collect(Collectors.toSet())));
+    }
+
+
     public ProfileDTO assign(Long profileId, Collection<UserDTO> users, String assignedBy) {
         return assignByUUID(profileId, users.stream().map(BasicUserDTO::getUUID).collect(Collectors.toSet()), assignedBy);
     }
@@ -181,12 +189,12 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
 
 
     public void assignProfiles(UUID userId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
-        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByUserId(userId);
+        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByUserIdAndProjectId(userId, null);
         final List<Long> existingProfilesInProject = existingProjectProfiles.stream().map(p -> p.getId().getProfileId()).toList();
         final List<ProfileDTO> profilesToAdd = profilesDTOs.stream().filter(p -> !existingProfilesInProject.contains(p.getId())).toList();
         final List<UserProfile> userProfiles = new ArrayList<>();
         profilesToAdd.forEach(profile ->
-                userProfiles.add(new UserProfile(userId, profile.getId())));
+                userProfiles.add(new UserProfile(userId, profile.getId(), null)));
         if (!userProfiles.isEmpty()) {
             userProfileProvider.saveAll(userProfiles);
         }
@@ -195,7 +203,7 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
     public void unassignProfiles(UUID userId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
         final List<UserProfile> userProfiles = new ArrayList<>();
         profilesDTOs.forEach(profile ->
-                userProfiles.add(new UserProfile(userId, profile.getId())));
+                userProfiles.add(new UserProfile(userId, profile.getId(), null)));
         if (!userProfiles.isEmpty()) {
             userProfileProvider.deleteAll(userProfiles);
         }
@@ -208,7 +216,7 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         final List<UserDTO> profilesToAdd = userDTOS.stream().filter(u -> !existingUsersInProfile.contains(u.getUUID())).toList();
         final List<UserProfile> userProfiles = new ArrayList<>();
         profilesToAdd.forEach(user ->
-                userProfiles.add(new UserProfile(user.getUUID(), profileId)));
+                userProfiles.add(new UserProfile(user.getUUID(), profileId, null)));
         if (!userProfiles.isEmpty()) {
             userProfileProvider.saveAll(userProfiles);
         }
@@ -217,7 +225,7 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
     public void unassignUsers(Long profileId, Collection<UserDTO> userDTOS, String creatorName) {
         final List<UserProfile> userProfiles = new ArrayList<>();
         userDTOS.forEach(user ->
-                userProfiles.add(new UserProfile(user.getUUID(), profileId)));
+                userProfiles.add(new UserProfile(user.getUUID(), profileId, null)));
         if (!userProfiles.isEmpty()) {
             userProfileProvider.deleteAll(userProfiles);
         }

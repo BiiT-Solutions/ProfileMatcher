@@ -14,9 +14,9 @@ import java.util.UUID;
 public interface UserProfileRepository extends StorableObjectRepository<UserProfile,
         UserProfileId> {
 
-    Set<UserProfile> findByIdUserId(UUID userId);
+    Set<UserProfile> findByIdUserUid(UUID userId);
 
-    Set<UserProfile> findByIdUserIdAndIdProjectId(UUID userId, Long projectId);
+    Set<UserProfile> findByIdUserUidAndIdProjectId(UUID userId, Long projectId);
 
     Set<UserProfile> findByIdProfileId(Long profileId);
 

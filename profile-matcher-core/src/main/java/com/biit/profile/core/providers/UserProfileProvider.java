@@ -19,11 +19,11 @@ public class UserProfileProvider extends StorableObjectProvider<UserProfile, Use
 
 
     public Set<UserProfile> findByUserId(UUID userId) {
-        return getRepository().findByIdUserId(userId);
+        return getRepository().findByIdUserUid(userId);
     }
 
     public Set<UserProfile> findByUserIdAndProjectId(UUID userId, Long projectId) {
-        return getRepository().findByIdUserIdAndIdProjectId(userId, projectId);
+        return getRepository().findByIdUserUidAndIdProjectId(userId, projectId);
     }
 
 

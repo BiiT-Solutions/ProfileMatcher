@@ -19,7 +19,7 @@ public class UserProfileId implements Serializable {
     @Column(name = "profile_id", nullable = false)
     private Long profileId;
 
-    @Column(name = "project_id", nullable = false)
+    @Column(name = "project_id")
     private Long projectId;
 
     public UserProfileId() {
@@ -47,5 +47,13 @@ public class UserProfileId implements Serializable {
 
     public void setProfileId(Long profileId) {
         this.profileId = profileId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

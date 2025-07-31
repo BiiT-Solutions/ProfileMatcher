@@ -32,6 +32,7 @@ public class ProfilesSecurityService extends SecurityService {
         return "PROFILEMATCHER_EDITOR";
     }
 
+    @Override
     public String getOrganizationAdminPrivilege() {
         return "PROFILEMATCHER_ORGANIZATION_ADMIN";
     }

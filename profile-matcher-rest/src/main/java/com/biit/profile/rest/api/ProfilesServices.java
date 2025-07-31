@@ -99,7 +99,7 @@ public class ProfilesServices extends ElementServices<Profile, Long, ProfileDTO,
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Assigns a candidates to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Assigns a candidate to a profile.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/{id}/candidates/{userUUID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ProfileDTO addCandidatesByUUID(
             @Parameter(description = "Id of an existing Profile", required = true)

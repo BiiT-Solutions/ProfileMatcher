@@ -3,7 +3,7 @@ package com.biit.profile.core.providers;
 import com.biit.profile.persistence.entities.ProjectProfile;
 import com.biit.profile.persistence.entities.ProjectProfileId;
 import com.biit.profile.persistence.repositories.ProjectProfileRepository;
-import com.biit.profile.persistence.repositories.UserProfileRepository;
+import com.biit.profile.persistence.repositories.UserProjectProfileRepository;
 import com.biit.server.providers.StorableObjectProvider;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +14,11 @@ import java.util.Set;
 @Service
 public class ProjectProfileProvider extends StorableObjectProvider<ProjectProfile, ProjectProfileId, ProjectProfileRepository> {
 
-    private final UserProfileRepository userProfileRepository;
+    private final UserProjectProfileRepository userProjectProfileRepository;
 
-    public ProjectProfileProvider(ProjectProfileRepository repository, UserProfileRepository userProfileRepository) {
+    public ProjectProfileProvider(ProjectProfileRepository repository, UserProjectProfileRepository userProjectProfileRepository) {
         super(repository);
-        this.userProfileRepository = userProfileRepository;
+        this.userProjectProfileRepository = userProjectProfileRepository;
     }
 
 
@@ -37,26 +37,26 @@ public class ProjectProfileProvider extends StorableObjectProvider<ProjectProfil
 
     @Override
     public void delete(ProjectProfile entity) {
-        userProfileRepository.deleteByIdProjectIdAndIdProfileId(entity.getId().getProjectId(), entity.getId().getProfileId());
+        userProjectProfileRepository.deleteByIdProjectIdAndIdProfileId(entity.getId().getProjectId(), entity.getId().getProfileId());
         super.delete(entity);
     }
 
     @Override
     public void deleteById(ProjectProfileId id) {
-        userProfileRepository.deleteByIdProjectIdAndIdProfileId(id.getProjectId(), id.getProfileId());
+        userProjectProfileRepository.deleteByIdProjectIdAndIdProfileId(id.getProjectId(), id.getProfileId());
         super.deleteById(id);
     }
 
     @Override
     public void deleteAll() {
-        userProfileRepository.deleteByIdProjectIdNotNull();
+        userProjectProfileRepository.deleteByIdProjectIdNotNull();
         super.deleteAll();
     }
 
     @Override
     public void deleteAll(Collection<ProjectProfile> projectProfiles) {
         projectProfiles.forEach(p ->
-                userProfileRepository.deleteByIdProjectIdAndIdProfileId(p.getId().getProjectId(), p.getId().getProfileId()));
+                userProjectProfileRepository.deleteByIdProjectIdAndIdProfileId(p.getId().getProjectId(), p.getId().getProfileId()));
         super.deleteAll(projectProfiles);
     }
 

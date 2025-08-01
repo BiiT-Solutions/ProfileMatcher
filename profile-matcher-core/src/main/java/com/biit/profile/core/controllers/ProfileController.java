@@ -188,23 +188,23 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
 
 
     public void assignProfiles(UUID userId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
-        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByUserIdAndProjectId(userId, null);
+        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByUserId(userId);
         final List<Long> existingProfilesInProject = existingProjectProfiles.stream().map(p -> p.getId().getProfileId()).toList();
         final List<ProfileDTO> profilesToAdd = profilesDTOs.stream().filter(p -> !existingProfilesInProject.contains(p.getId())).toList();
-        final List<UserProfile> userProfiles = new ArrayList<>();
+        final List<UserProfile> userProjectProfiles = new ArrayList<>();
         profilesToAdd.forEach(profile ->
-                userProfiles.add(new UserProfile(userId, profile.getId(), null)));
-        if (!userProfiles.isEmpty()) {
-            userProfileProvider.saveAll(userProfiles);
+                userProjectProfiles.add(new UserProfile(userId, profile.getId())));
+        if (!userProjectProfiles.isEmpty()) {
+            userProfileProvider.saveAll(userProjectProfiles);
         }
     }
 
     public void unassignProfiles(UUID userId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
-        final List<UserProfile> userProfiles = new ArrayList<>();
+        final List<UserProfile> userProjectProfiles = new ArrayList<>();
         profilesDTOs.forEach(profile ->
-                userProfiles.add(new UserProfile(userId, profile.getId(), null)));
-        if (!userProfiles.isEmpty()) {
-            userProfileProvider.deleteAll(userProfiles);
+                userProjectProfiles.add(new UserProfile(userId, profile.getId())));
+        if (!userProjectProfiles.isEmpty()) {
+            userProfileProvider.deleteAll(userProjectProfiles);
         }
     }
 
@@ -213,20 +213,20 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
         final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByProfileId(profileId);
         final List<UUID> existingUsersInProfile = existingProjectProfiles.stream().map(p -> p.getId().getUserUid()).toList();
         final List<UserDTO> profilesToAdd = userDTOS.stream().filter(u -> !existingUsersInProfile.contains(u.getUUID())).toList();
-        final List<UserProfile> userProfiles = new ArrayList<>();
+        final List<UserProfile> userProjectProfiles = new ArrayList<>();
         profilesToAdd.forEach(user ->
-                userProfiles.add(new UserProfile(user.getUUID(), profileId, null)));
-        if (!userProfiles.isEmpty()) {
-            userProfileProvider.saveAll(userProfiles);
+                userProjectProfiles.add(new UserProfile(user.getUUID(), profileId)));
+        if (!userProjectProfiles.isEmpty()) {
+            userProfileProvider.saveAll(userProjectProfiles);
         }
     }
 
     public void unassignUsers(Long profileId, Collection<UserDTO> userDTOS, String creatorName) {
-        final List<UserProfile> userProfiles = new ArrayList<>();
+        final List<UserProfile> userProjectProfiles = new ArrayList<>();
         userDTOS.forEach(user ->
-                userProfiles.add(new UserProfile(user.getUUID(), profileId, null)));
-        if (!userProfiles.isEmpty()) {
-            userProfileProvider.deleteAll(userProfiles);
+                userProjectProfiles.add(new UserProfile(user.getUUID(), profileId)));
+        if (!userProjectProfiles.isEmpty()) {
+            userProfileProvider.deleteAll(userProjectProfiles);
         }
     }
 

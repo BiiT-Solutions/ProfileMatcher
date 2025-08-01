@@ -22,22 +22,13 @@ public class UserProfileProvider extends StorableObjectProvider<UserProfile, Use
         return getRepository().findByIdUserUid(userId);
     }
 
-    public Set<UserProfile> findByUserIdAndProjectId(UUID userId, Long projectId) {
-        return getRepository().findByIdUserUidAndIdProjectId(userId, projectId);
-    }
-
-    public Set<UserProfile> findByProjectIdAndProfileId(Long projectId, Long profileId) {
-        return getRepository().findByIdProjectIdAndIdProfileId(projectId, profileId);
-    }
-
 
     public Set<UserProfile> findByProfileId(Long profileId) {
         return getRepository().findByIdProfileId(profileId);
     }
 
-
-    public void deleteByProjectIdAndProfileId(Long projectId, Long profileId) {
-        getRepository().deleteByIdProjectIdAndIdProfileId(projectId, profileId);
+    public void deleteByProfileId(Long profileId) {
+        getRepository().deleteByIdProfileId(profileId);
     }
 
 }

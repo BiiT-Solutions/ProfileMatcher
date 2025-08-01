@@ -11,10 +11,10 @@ import com.biit.profile.core.models.ProfileDTO;
 import com.biit.profile.core.models.ProjectDTO;
 import com.biit.profile.core.providers.ProjectProfileProvider;
 import com.biit.profile.core.providers.ProjectProvider;
-import com.biit.profile.core.providers.UserProfileProvider;
+import com.biit.profile.core.providers.UserProjectProfileProvider;
 import com.biit.profile.persistence.entities.Project;
 import com.biit.profile.persistence.entities.ProjectProfile;
-import com.biit.profile.persistence.entities.UserProfile;
+import com.biit.profile.persistence.entities.UserProjectProfile;
 import com.biit.profile.persistence.repositories.ProjectRepository;
 import com.biit.server.security.IUserOrganizationProvider;
 import com.biit.server.security.model.IUserOrganization;
@@ -34,14 +34,14 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
         ProjectProvider, ProjectConverterRequest, ProjectConverter> {
 
     private final ProjectProfileProvider projectProfileProvider;
-    private final UserProfileProvider userProfileProvider;
+    private final UserProjectProfileProvider userProjectProfileProvider;
 
     protected ProjectController(ProjectProvider provider, ProjectConverter converter, IEventSender<ProjectDTO> eventSender,
                                 List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider,
-                                ProjectProfileProvider projectProfileProvider, UserProfileProvider userProfileProvider) {
+                                ProjectProfileProvider projectProfileProvider, UserProjectProfileProvider userProjectProfileProvider) {
         super(provider, converter, eventSender, userOrganizationProvider);
         this.projectProfileProvider = projectProfileProvider;
-        this.userProfileProvider = userProfileProvider;
+        this.userProjectProfileProvider = userProjectProfileProvider;
     }
 
     @Override
@@ -123,23 +123,23 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
                 ));
 
 
-        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByUserIdAndProjectId(userId, projectId);
+        final Set<UserProjectProfile> existingProjectProfiles = userProjectProfileProvider.findByUserIdAndProjectId(userId, projectId);
         final List<Long> existingProfilesInProject = existingProjectProfiles.stream().map(p -> p.getId().getProfileId()).toList();
         final List<ProfileDTO> profilesToAdd = profilesDTOs.stream().filter(p -> !existingProfilesInProject.contains(p.getId())).toList();
-        final List<UserProfile> userProfiles = new ArrayList<>();
+        final List<UserProjectProfile> userProjectProfiles = new ArrayList<>();
         profilesToAdd.forEach(profile ->
-                userProfiles.add(new UserProfile(userId, profile.getId(), projectId)));
-        if (!userProfiles.isEmpty()) {
-            userProfileProvider.saveAll(userProfiles);
+                userProjectProfiles.add(new UserProjectProfile(userId, profile.getId(), projectId)));
+        if (!userProjectProfiles.isEmpty()) {
+            userProjectProfileProvider.saveAll(userProjectProfiles);
         }
     }
 
     public void unassignUsersFromProfiles(Long projectId, UUID userId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
-        final List<UserProfile> userProfiles = new ArrayList<>();
+        final List<UserProjectProfile> userProjectProfiles = new ArrayList<>();
         profilesDTOs.forEach(profile ->
-                userProfiles.add(new UserProfile(userId, profile.getId(), projectId)));
-        if (!userProfiles.isEmpty()) {
-            userProfileProvider.deleteAll(userProfiles);
+                userProjectProfiles.add(new UserProjectProfile(userId, profile.getId(), projectId)));
+        if (!userProjectProfiles.isEmpty()) {
+            userProjectProfileProvider.deleteAll(userProjectProfiles);
         }
     }
 
@@ -150,28 +150,28 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
                         + "' is not assigned to project '" + profileId + "'.")
         );
 
-        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByProfileId(profileId);
+        final Set<UserProjectProfile> existingProjectProfiles = userProjectProfileProvider.findByProfileId(profileId);
         final List<UUID> existingUsersInProfile = existingProjectProfiles.stream().map(p -> p.getId().getUserUid()).toList();
         final List<UserDTO> profilesToAdd = userDTOS.stream().filter(u -> !existingUsersInProfile.contains(u.getUUID())).toList();
-        final List<UserProfile> userProfiles = new ArrayList<>();
+        final List<UserProjectProfile> userProjectProfiles = new ArrayList<>();
         profilesToAdd.forEach(user ->
-                userProfiles.add(new UserProfile(user.getUUID(), profileId, projectId)));
-        if (!userProfiles.isEmpty()) {
-            userProfileProvider.saveAll(userProfiles);
+                userProjectProfiles.add(new UserProjectProfile(user.getUUID(), profileId, projectId)));
+        if (!userProjectProfiles.isEmpty()) {
+            userProjectProfileProvider.saveAll(userProjectProfiles);
         }
     }
 
     public void unassignUsersFromProfiles(Long projectId, Long profileId, Collection<UserDTO> userDTOS, String creatorName) {
-        final List<UserProfile> userProfiles = new ArrayList<>();
+        final List<UserProjectProfile> userProjectProfiles = new ArrayList<>();
         userDTOS.forEach(user ->
-                userProfiles.add(new UserProfile(user.getUUID(), profileId, projectId)));
-        if (!userProfiles.isEmpty()) {
-            userProfileProvider.deleteAll(userProfiles);
+                userProjectProfiles.add(new UserProjectProfile(user.getUUID(), profileId, projectId)));
+        if (!userProjectProfiles.isEmpty()) {
+            userProjectProfileProvider.deleteAll(userProjectProfiles);
         }
     }
 
     public Set<UUID> getUsers(Long projectId, Long profileId) {
-        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByProjectIdAndProfileId(projectId, profileId);
+        final Set<UserProjectProfile> existingProjectProfiles = userProjectProfileProvider.findByProjectIdAndProfileId(projectId, profileId);
         return existingProjectProfiles.stream().map(p -> p.getId().getUserUid()).collect(Collectors.toSet());
     }
 }

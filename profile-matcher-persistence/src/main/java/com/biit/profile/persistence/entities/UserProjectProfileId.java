@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Embeddable
-public class UserProfileId implements Serializable {
+public class UserProjectProfileId implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 3529300883056582198L;
@@ -19,14 +19,18 @@ public class UserProfileId implements Serializable {
     @Column(name = "profile_id", nullable = false)
     private Long profileId;
 
-    public UserProfileId() {
+    @Column(name = "project_id")
+    private Long projectId;
+
+    public UserProjectProfileId() {
         super();
     }
 
-    public UserProfileId(UUID userUid, Long profileId) {
+    public UserProjectProfileId(UUID userUid, Long profileId, Long projectId) {
         this();
         this.userUid = userUid;
         this.profileId = profileId;
+        this.projectId = projectId;
     }
 
     public UUID getUserUid() {
@@ -43,5 +47,13 @@ public class UserProfileId implements Serializable {
 
     public void setProfileId(Long profileId) {
         this.profileId = profileId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

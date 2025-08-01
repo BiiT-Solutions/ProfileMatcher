@@ -6,6 +6,7 @@ import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.repositories.ProfileRepository;
 import com.biit.profile.persistence.repositories.ProjectProfileRepository;
 import com.biit.profile.persistence.repositories.UserProfileRepository;
+import com.biit.profile.persistence.repositories.UserProjectProfileRepository;
 import com.biit.server.providers.ElementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,16 +24,19 @@ import static com.biit.database.encryption.KeyProperty.getEncryptionKey;
 @Service
 public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepository> {
 
-    private final UserProfileRepository userProfileRepository;
+    private final UserProjectProfileRepository userProjectProfileRepository;
     private final ProjectProfileRepository projectProfileRepository;
+    private final UserProfileRepository userProfileRepository;
 
     @Autowired
     public ProfileProvider(ProfileRepository repository,
-                           UserProfileRepository userProfileRepository,
-                           ProjectProfileRepository projectProfileRepository) {
+                           UserProjectProfileRepository userProjectProfileRepository,
+                           ProjectProfileRepository projectProfileRepository,
+                           UserProfileRepository userProfileRepository) {
         super(repository);
-        this.userProfileRepository = userProfileRepository;
+        this.userProjectProfileRepository = userProjectProfileRepository;
         this.projectProfileRepository = projectProfileRepository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Override
@@ -133,6 +137,7 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
     @Override
     public void delete(Profile entity) {
         projectProfileRepository.deleteByIdProfileId(entity.getId());
+        userProjectProfileRepository.deleteByIdProfileId(entity.getId());
         userProfileRepository.deleteByIdProfileId(entity.getId());
         super.delete(entity);
     }
@@ -141,6 +146,7 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
     @Override
     public void deleteById(Long id) {
         projectProfileRepository.deleteByIdProfileId(id);
+        userProjectProfileRepository.deleteByIdProfileId(id);
         userProfileRepository.deleteByIdProfileId(id);
         super.deleteById(id);
     }
@@ -149,7 +155,8 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
     @Override
     public void deleteAll() {
         projectProfileRepository.deleteByIdProfileIdNotNull();
-        userProfileRepository.deleteByIdProfileIdNotNull();
+        userProjectProfileRepository.deleteByIdProfileIdNotNull();
+        userProfileRepository.deleteAll();
         super.deleteAll();
     }
 
@@ -158,6 +165,7 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
     public void deleteAll(Collection<Profile> profiles) {
         profiles.forEach(p -> {
             projectProfileRepository.deleteByIdProfileId(p.getId());
+            userProjectProfileRepository.deleteByIdProfileId(p.getId());
             userProfileRepository.deleteByIdProfileId(p.getId());
         });
         super.deleteAll(profiles);

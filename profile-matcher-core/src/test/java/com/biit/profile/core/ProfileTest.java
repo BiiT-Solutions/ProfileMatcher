@@ -15,6 +15,8 @@ import org.testng.annotations.Test;
 
 import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest
 @Test(groups = {"profileTest"})
@@ -26,6 +28,8 @@ public class ProfileTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private ProfileController profileController;
+
+    private ProfileDTO savedProfileDTO;
 
     private String toJson(DroolsSubmittedForm droolsSubmittedForm) throws JsonProcessingException {
         return ObjectMapperFactory.getObjectMapper().writeValueAsString(droolsSubmittedForm);
@@ -39,10 +43,22 @@ public class ProfileTest extends AbstractTestNGSpringContextTests {
     public void generateProfile() throws FileNotFoundException, JsonProcessingException {
         final DroolsSubmittedForm droolsSubmittedForm = DroolsSubmittedForm.getFromJson(FileReader.getResource(DROOLS_FORM_FILE_PATH, StandardCharsets.UTF_8));
         final ProfileDTO profileDTO = new ProfileDTO(PROFILE_NAME, toJson(droolsSubmittedForm));
-        final ProfileDTO savedProfileDTO = profileController.create(profileDTO, null);
+        savedProfileDTO = profileController.create(profileDTO, null);
         Assert.assertNotNull(savedProfileDTO.getId());
 
         Assert.assertEquals(profileController.getByName(PROFILE_NAME).getContent(), toJson(droolsSubmittedForm));
+    }
+
+    @Test(dependsOnMethods = "generateProfile")
+    public void assignUserToProfile() {
+        profileController.assignProfiles(UUID.randomUUID(), List.of(savedProfileDTO), null);
+        Assert.assertEquals(profileController.getUsers(savedProfileDTO.getId()).size(), 1);
+    }
+
+    @Test(dependsOnMethods = {"assignUserToProfile"})
+    public void deleteProfile() {
+        profileController.delete(savedProfileDTO, null);
+        Assert.assertEquals(profileController.getUsers(savedProfileDTO.getId()).size(), 0);
     }
 
 }

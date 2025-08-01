@@ -19,32 +19,33 @@ import java.util.UUID;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "user_profiles", indexes = {
+@Table(name = "user_project_profiles", indexes = {
         @Index(name = "ind_users", columnList = "user_uid"),
         @Index(name = "ind_profiles", columnList = "profile_id"),
+        @Index(name = "ind_projects", columnList = "project_id"),
 })
-public class UserProfile extends StorableObject {
+public class UserProjectProfile extends StorableObject {
 
     @Serial
     private static final long serialVersionUID = 641413219070414764L;
 
     @EmbeddedId
-    private UserProfileId id;
+    private UserProjectProfileId id;
 
-    public UserProfile() {
+    public UserProjectProfile() {
         super();
     }
 
-    public UserProfile(UUID userId, Long profileId) {
+    public UserProjectProfile(UUID userId, Long profileId, Long projectId) {
         this();
-        setId(new UserProfileId(userId, profileId));
+        setId(new UserProjectProfileId(userId, profileId, projectId));
     }
 
-    public UserProfileId getId() {
+    public UserProjectProfileId getId() {
         return id;
     }
 
-    public void setId(UserProfileId id) {
+    public void setId(UserProjectProfileId id) {
         this.id = id;
     }
 }

@@ -27,7 +27,7 @@ public class ProfileTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private ProfileController profileController;
 
-    public String toJson(DroolsSubmittedForm droolsSubmittedForm) throws JsonProcessingException {
+    private String toJson(DroolsSubmittedForm droolsSubmittedForm) throws JsonProcessingException {
         return ObjectMapperFactory.getObjectMapper().writeValueAsString(droolsSubmittedForm);
     }
 

@@ -4,6 +4,7 @@ import com.biit.kafka.controllers.KafkaElementController;
 import com.biit.kafka.events.IEventSender;
 import com.biit.profile.core.converters.ProjectConverter;
 import com.biit.profile.core.converters.models.ProjectConverterRequest;
+import com.biit.profile.core.exceptions.ProfileNotAssignedToProjectException;
 import com.biit.profile.core.exceptions.ProjectAlreadyExistsException;
 import com.biit.profile.core.exceptions.ProjectNotFoundException;
 import com.biit.profile.core.models.ProfileDTO;
@@ -114,6 +115,14 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
     }
 
     public void assignUsersToProfiles(Long projectId, UUID userId, Collection<ProfileDTO> profilesDTOs, String creatorName) {
+
+        profilesDTOs.forEach(profile ->
+                projectProfileProvider.findByProjectIdAndProfileId(projectId, profile.getId()).orElseThrow(() ->
+                        new ProfileNotAssignedToProjectException(this.getClass(), "Profile '" + projectId
+                                + "' is not assigned to project '" + profile.getId() + "'.")
+                ));
+
+
         final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByUserIdAndProjectId(userId, projectId);
         final List<Long> existingProfilesInProject = existingProjectProfiles.stream().map(p -> p.getId().getProfileId()).toList();
         final List<ProfileDTO> profilesToAdd = profilesDTOs.stream().filter(p -> !existingProfilesInProject.contains(p.getId())).toList();
@@ -136,6 +145,11 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
 
 
     public void assignUsersToProfiles(Long projectId, Long profileId, Collection<UserDTO> userDTOS, String creatorName) {
+        projectProfileProvider.findByProjectIdAndProfileId(projectId, profileId).orElseThrow(() ->
+                new ProfileNotAssignedToProjectException(this.getClass(), "Profile '" + profileId
+                        + "' is not assigned to project '" + profileId + "'.")
+        );
+
         final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByProfileId(profileId);
         final List<UUID> existingUsersInProfile = existingProjectProfiles.stream().map(p -> p.getId().getUserUid()).toList();
         final List<UserDTO> profilesToAdd = userDTOS.stream().filter(u -> !existingUsersInProfile.contains(u.getUUID())).toList();
@@ -154,5 +168,10 @@ public class ProjectController extends KafkaElementController<Project, Long, Pro
         if (!userProfiles.isEmpty()) {
             userProfileProvider.deleteAll(userProfiles);
         }
+    }
+
+    public Set<UUID> getUsers(Long projectId, Long profileId) {
+        final Set<UserProfile> existingProjectProfiles = userProfileProvider.findByProjectIdAndProfileId(projectId, profileId);
+        return existingProjectProfiles.stream().map(p -> p.getId().getUserUid()).collect(Collectors.toSet());
     }
 }

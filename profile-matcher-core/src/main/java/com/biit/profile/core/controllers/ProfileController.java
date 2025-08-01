@@ -107,7 +107,6 @@ public class ProfileController extends KafkaElementController<Profile, Long, Pro
     }
 
 
-
     public List<ProfileDTO> getByCandidateId(UUID userId) {
         final Set<ProfileCandidate> projectProfilesCandidates = profileCandidateProvider.findByUserUid(userId);
         return convertAll(getProvider().findByIdIn(projectProfilesCandidates.stream().map(p -> p.getId().getProfileId())

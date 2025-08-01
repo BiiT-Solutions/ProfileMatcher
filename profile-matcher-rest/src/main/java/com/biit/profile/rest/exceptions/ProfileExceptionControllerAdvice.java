@@ -4,6 +4,7 @@ import com.biit.kafka.exceptions.InvalidEventException;
 import com.biit.profile.core.exceptions.CandidateNotFoundException;
 import com.biit.profile.core.exceptions.CommentTooLongException;
 import com.biit.profile.core.exceptions.InvalidFormException;
+import com.biit.profile.core.exceptions.ProfileNotAssignedToProjectException;
 import com.biit.profile.core.exceptions.ProfileNotFoundException;
 import com.biit.profile.core.exceptions.ProjectAlreadyExistsException;
 import com.biit.profile.logger.ProfileLogger;
@@ -89,4 +90,12 @@ public class ProfileExceptionControllerAdvice extends ServerExceptionControllerA
         ProfileLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "project_already_exists", ex), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ProfileNotAssignedToProjectException.class)
+    public ResponseEntity<Object> profileNotAssignedToProjectException(Exception ex) {
+        ProfileLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "profile_not_assigned_to_project", ex), HttpStatus.BAD_REQUEST);
+    }
+
+
 }

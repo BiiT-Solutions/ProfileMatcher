@@ -4,6 +4,8 @@ import com.biit.drools.form.DroolsSubmittedForm;
 import com.biit.profile.core.exceptions.InvalidFormException;
 import com.biit.profile.persistence.entities.Profile;
 import com.biit.profile.persistence.repositories.ProfileRepository;
+import com.biit.profile.persistence.repositories.ProjectProfileRepository;
+import com.biit.profile.persistence.repositories.UserProfileRepository;
 import com.biit.server.providers.ElementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +23,16 @@ import static com.biit.database.encryption.KeyProperty.getEncryptionKey;
 @Service
 public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepository> {
 
+    private final UserProfileRepository userProfileRepository;
+    private final ProjectProfileRepository projectProfileRepository;
+
     @Autowired
-    public ProfileProvider(ProfileRepository repository) {
+    public ProfileProvider(ProfileRepository repository,
+                           UserProfileRepository userProfileRepository,
+                           ProjectProfileRepository projectProfileRepository) {
         super(repository);
+        this.userProfileRepository = userProfileRepository;
+        this.projectProfileRepository = projectProfileRepository;
     }
 
     @Override
@@ -118,5 +127,39 @@ public class ProfileProvider extends ElementProvider<Profile, Long, ProfileRepos
         vacancyProfile.populateFields();
 
         return vacancyProfile;
+    }
+
+
+    @Override
+    public void delete(Profile entity) {
+        projectProfileRepository.deleteByIdProfileId(entity.getId());
+        userProfileRepository.deleteByIdProfileId(entity.getId());
+        super.delete(entity);
+    }
+
+
+    @Override
+    public void deleteById(Long id) {
+        projectProfileRepository.deleteByIdProfileId(id);
+        userProfileRepository.deleteByIdProfileId(id);
+        super.deleteById(id);
+    }
+
+
+    @Override
+    public void deleteAll() {
+        projectProfileRepository.deleteByIdProfileIdNotNull();
+        userProfileRepository.deleteByIdProfileIdNotNull();
+        super.deleteAll();
+    }
+
+
+    @Override
+    public void deleteAll(Collection<Profile> profiles) {
+        profiles.forEach(p -> {
+            projectProfileRepository.deleteByIdProfileId(p.getId());
+            userProfileRepository.deleteByIdProfileId(p.getId());
+        });
+        super.deleteAll(profiles);
     }
 }

@@ -8,6 +8,7 @@ import com.biit.server.providers.StorableObjectProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -28,6 +29,28 @@ public class ProjectProfileProvider extends StorableObjectProvider<ProjectProfil
 
     public Set<ProjectProfile> findByProfileId(Long profileId) {
         return getRepository().findByIdProfileId(profileId);
+    }
+
+    public Optional<ProjectProfile> findByProjectIdAndProfileId(Long projectId, Long profileId) {
+        return getRepository().findByIdProjectIdAndIdProfileId(projectId, profileId);
+    }
+
+    @Override
+    public void delete(ProjectProfile entity) {
+        userProfileRepository.deleteByIdProjectIdAndIdProfileId(entity.getId().getProjectId(), entity.getId().getProfileId());
+        super.delete(entity);
+    }
+
+    @Override
+    public void deleteById(ProjectProfileId id) {
+        userProfileRepository.deleteByIdProjectIdAndIdProfileId(id.getProjectId(), id.getProfileId());
+        super.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        userProfileRepository.deleteByIdProjectIdNotNull();
+        super.deleteAll();
     }
 
     @Override

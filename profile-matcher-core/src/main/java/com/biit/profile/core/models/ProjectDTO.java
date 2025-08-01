@@ -22,6 +22,11 @@ public class ProjectDTO extends ElementDTO<Long> {
         super();
     }
 
+    public ProjectDTO(String name) {
+        this();
+        this.name = name;
+    }
+
     public ProjectDTO(String name, String description, String organization) {
         this();
         this.name = name;

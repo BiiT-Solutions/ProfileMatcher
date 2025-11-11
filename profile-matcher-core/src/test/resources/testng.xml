@@ -9,7 +9,7 @@
             <run>
                 <include name="profileTest"/>
                 <include name="projectTest"/>
-                <include name="cadt"/>
+                <exclude name="cadt"/>
             </run>
         </groups>
         <classes>

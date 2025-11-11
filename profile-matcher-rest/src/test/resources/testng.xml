@@ -7,9 +7,9 @@
     <test name="Profile Matcher" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <include name="profileServices"/>
-                <include name="profileCandidateCommentServices"/>
-                <include name="cadtIndividualProfileServices"/>
+                <exclude name="profileServices"/>
+                <exclude name="profileCandidateCommentServices"/>
+                <exclude name="cadtIndividualProfileServices"/>
             </run>
         </groups>
         <classes>

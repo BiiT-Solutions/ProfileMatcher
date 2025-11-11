@@ -7,7 +7,7 @@
 
     <parent>
         <artifactId>profile-matcher</artifactId>
-        <groupId>com.biit.profile</groupId>
+        <groupId>com.biit-solutions.profile</groupId>
         <version>1.2.57-SNAPSHOT</version>
     </parent>
 
@@ -17,20 +17,20 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.biit.profile</groupId>
+            <groupId>com.biit-solutions.profile</groupId>
             <artifactId>profile-matcher-logger</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>rest-server-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>form-structure-drools</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>rest-server-persistence</artifactId>
         </dependency>
         <dependency>

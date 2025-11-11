@@ -7,7 +7,7 @@
 
     <parent>
         <artifactId>profile-matcher</artifactId>
-        <groupId>com.biit.profile</groupId>
+        <groupId>com.biit-solutions.profile</groupId>
         <version>1.2.57-SNAPSHOT</version>
     </parent>
 
@@ -17,7 +17,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>common-utils</artifactId>
         </dependency>
         <dependency>
